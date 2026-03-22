@@ -15,7 +15,7 @@ KULTI é uma plataforma web criada para admiradores de arte e turistas que veem 
 ## Tecnologias
 * **Linguagens/Frameworks:** React.js, FastAPI (Python)
 * **Banco de Dados:** PostgreSQL (com PostGIS)
-* **Agentes de IA (Desenvolvimento):** Cursor, Claude Code e Gemini
+* **Agentes de IA (Desenvolvimento):** Cursor, Claude Code, Gemini, ChatGPT e Github Copilot
 * **IA Integrada (Sistema):** Gemini API
 
 ## User Stories (MVP)
