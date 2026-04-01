@@ -18,6 +18,10 @@ KULTI é uma plataforma web criada para admiradores de arte e turistas que veem 
 * **Agentes de IA (Desenvolvimento):** Cursor, Claude Code, Gemini, ChatGPT e Github Copilot
 * **IA Integrada (Sistema):** Gemini API
 
+## Documentação
+
+A documentação do projeto está disponível em [docs/INDEX.md](docs/INDEX.md) (em inglês).
+
 ## User Stories (MVP)
 1. Como visitante da plataforma, quero criar uma conta para salvar minhas atividades e preferências.
 2. Como usuário da plataforma, quero visualizar no mapa museus e galerias próximos para descobrir locais de interesse.

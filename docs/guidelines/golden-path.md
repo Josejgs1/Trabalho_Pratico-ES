@@ -1,3 +1,5 @@
+[← Back to Index](../INDEX.md)
+
 # KULTI — Golden Path
 
 Project conventions and standards for the KULTI development team.
@@ -35,7 +37,11 @@ Examples: `feature/user-auth`, `fix/map-marker-click`, `refactor/api-routes`
 ## Project Structure
 
 ```
-├── docs/                   # Project documentation
+├── docs/
+│   ├── INDEX.md            # Documentation manifest
+│   ├── setup/              # Environment & infrastructure guides
+│   ├── adr/                # Architecture Decision Records
+│   └── guidelines/         # Team conventions & standards
 ├── backend/
 │   └── app/
 │       ├── api/            # Route handlers / endpoints
@@ -62,6 +68,13 @@ Examples: `feature/user-auth`, `fix/map-marker-click`, `refactor/api-routes`
 
 ## Documentation Style
 
-- Documentation lives in the `docs/` folder.
+- Documentation lives in the `docs/` folder, organized into subdirectories (`setup/`, `adr/`, `guidelines/`).
+- `docs/INDEX.md` serves as the manifest — update it whenever a new doc is added.
 - Use Markdown (`.md`) for all docs.
 - Keep docs concise and up to date with the codebase.
+
+## See Also
+
+- [Acceptance Criteria](acceptance-criteria.md) — rules for PRs and task completion
+- [Architecture Decision Records](../adr/) — technical decisions and rationale
+- [Getting Started: Docker](../setup/docker-setup.md) | [Backend](../setup/backend-setup.md)

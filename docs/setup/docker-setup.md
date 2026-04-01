@@ -1,3 +1,5 @@
+[← Back to Index](../INDEX.md)
+
 # Docker Setup
 
 ## Prerequisites
@@ -45,3 +47,7 @@ docker compose logs db
 # Reset database (deletes all data)
 docker compose down -v
 ```
+
+## Next Steps
+
+- [Backend Setup](backend-setup.md) — install Python dependencies and run the API

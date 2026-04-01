@@ -1,4 +1,8 @@
+[← Back to Index](../INDEX.md)
+
 # Backend Setup
+
+> Before starting, make sure the database is running. See [Docker Setup](docker-setup.md).
 
 ## Prerequisites
 
@@ -27,3 +31,9 @@
 ```bash
 uvicorn app.main:app --reload
 ```
+
+## See Also
+
+- [Docker Setup](docker-setup.md) — database setup
+- [Golden Path](../guidelines/golden-path.md) — project conventions and structure
+- [ADR-001: ORM Choice](../adr/adr-001-orm-choice.md) — why we use SQLAlchemy + GeoAlchemy2

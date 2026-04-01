@@ -1,3 +1,5 @@
+[← Back to Index](../INDEX.md)
+
 # Acceptance Criteria Guidelines
 
 Rules for writing acceptance criteria for user stories and tasks.
@@ -18,3 +20,7 @@ Every task must meet the following before being considered done:
 ## Specific Acceptance Criteria
 
 The specific acceptance criteria for each user story are written by the PO directly on the corresponding issue in the GitHub Projects board.
+
+## See Also
+
+- [Golden Path](golden-path.md) — naming, branching, and commit conventions
