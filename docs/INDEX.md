@@ -14,6 +14,7 @@
 | File | Description |
 |------|-------------|
 | [adr-001-orm-choice.md](adr/adr-001-orm-choice.md) | Decision to use SQLAlchemy + GeoAlchemy2 + Pydantic over SQLModel |
+| [adr-002-ai-entry-points.md](adr/adr-002-ai-entry-points.md) | Decision to add AI assistant entry points for coding tools |
 
 ## guidelines/ — Team Conventions & Standards
 
