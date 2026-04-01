@@ -15,6 +15,7 @@
 |------|-------------|
 | [adr-001-orm-choice.md](adr/adr-001-orm-choice.md) | Decision to use SQLAlchemy + GeoAlchemy2 + Pydantic over SQLModel |
 | [adr-002-ai-entry-points.md](adr/adr-002-ai-entry-points.md) | Decision to add AI assistant entry points for coding tools |
+| [adr-003-venue-modeling.md](adr/adr-003-venue-modeling.md) | Venue table modeling decisions (PK, geography, category, driver, Alembic config) |
 
 ## guidelines/ — Team Conventions & Standards
 
@@ -23,3 +24,9 @@
 | [golden-path.md](guidelines/golden-path.md) | Naming conventions, branch strategy, commit style, project structure, tech stack |
 | [acceptance-criteria.md](guidelines/acceptance-criteria.md) | Rules for acceptance criteria on user stories and PRs |
 | [ai-tools-access.md](guidelines/ai-tools-access.md) | Recommended AI agents and mapping libraries access status |
+
+## diagrams/ — Data Model Diagrams
+
+| File | Description |
+|------|-------------|
+| [venue-entity.md](diagrams/venue-entity.md) | Mermaid ER diagram for the Venue (museums/galleries) table |
