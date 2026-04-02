@@ -9,12 +9,14 @@
 3. Before making architectural decisions, check existing [ADRs](adr/) for prior decisions.
 4. When adding new documentation, add a corresponding entry to [INDEX.md](INDEX.md).
 5. Follow the project structure defined in the Golden Path — do not create files outside the established directories without justification.
+6. Commit messages must be a **single line** in the imperative mood (≤ 72 chars). No multi-line bodies.
 
 ## Documentation Map
 
 ### Setup & Infrastructure
 - `docs/setup/backend-setup.md` — Python venv, dependencies, running FastAPI
 - `docs/setup/docker-setup.md` — Docker Compose for PostgreSQL + PostGIS
+- `docs/setup/database-schema.md` — ER diagram, conventions, and column reference for all tables
 
 ### Architecture Decision Records
 - `docs/adr/adr-001-orm-choice.md` — SQLAlchemy + GeoAlchemy2 + Pydantic over SQLModel
