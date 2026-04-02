@@ -33,6 +33,7 @@ Examples: `feature/user-auth`, `fix/map-marker-click`, `refactor/api-routes`
 - Write commit messages in **English**.
 - Use the imperative mood: `Add user login endpoint`, not `Added` or `Adds`.
 - Keep the subject line short (≤ 72 characters).
+- Use a **single-line message** — no multi-line body. The PR description provides the detailed context.
 
 ## Project Structure
 

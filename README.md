@@ -31,3 +31,7 @@ A documentação do projeto está disponível em [docs/INDEX.md](docs/INDEX.md) 
 6. Como usuário da plataforma, quero avaliar um local com uma nota para compartilhar minha experiência.
 7. Como usuário da plataforma, quero adicionar locais a uma lista de lugares que pretendo visitar no futuro.
 8. Como usuário da plataforma, quero receber sugestões de roteiros culturais com base nas minhas preferências (via IA) para facilitar o planejamento de visitas.
+
+## Relatório de Uso de IA
+
+O registro contínuo da experiência do time com ferramentas de IA durante o desenvolvimento está disponível [neste documento](https://docs.google.com/document/d/1i_aAPUEsm3-vu8rTo4DueWGN_01kkPlNUGhP_RhxIQA/edit?tab=t.0). Ao final do projeto, será convertido em um relatório formal.

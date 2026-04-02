@@ -10,7 +10,7 @@ Every task must meet the following before being considered done:
 
 - **Well documented:**
   - Code changes include clear comments where necessary.
-  - Database modeling tasks include a Mermaid diagram in `docs/diagrams/`.
+  - Database modeling tasks include an updated Mermaid diagram in [`docs/setup/database-schema.md`](../setup/database-schema.md).
   - API endpoints are documented with request/response examples.
 
 - **Well-described PR:** the pull request description must clearly explain what was done and why.
