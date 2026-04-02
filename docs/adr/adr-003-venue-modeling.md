@@ -43,4 +43,4 @@ GeoAlchemy2 automatically creates a GiST spatial index on `Geography` columns du
 
 ## See Also
 - [ADR-001: ORM Choice](adr-001-orm-choice.md) — SQLAlchemy + GeoAlchemy2 + Pydantic
-- [Venue Entity Diagram](../diagrams/venue-entity.md) — Mermaid ER diagram
+- [Database Schema](../setup/database-schema.md) — ER diagram and column reference

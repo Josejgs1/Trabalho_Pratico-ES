@@ -8,6 +8,7 @@
 |------|-------------|
 | [backend-setup.md](setup/backend-setup.md) | Python venv setup, dependency install, and how to run the FastAPI server |
 | [docker-setup.md](setup/docker-setup.md) | Docker Compose setup for the PostgreSQL + PostGIS database |
+| [database-schema.md](setup/database-schema.md) | ER diagram, conventions, and detailed column reference for all tables |
 
 ## adr/ — Architecture Decision Records
 
@@ -24,9 +25,3 @@
 | [golden-path.md](guidelines/golden-path.md) | Naming conventions, branch strategy, commit style, project structure, tech stack |
 | [acceptance-criteria.md](guidelines/acceptance-criteria.md) | Rules for acceptance criteria on user stories and PRs |
 | [ai-tools-access.md](guidelines/ai-tools-access.md) | Recommended AI agents and mapping libraries access status |
-
-## diagrams/ — Data Model Diagrams
-
-| File | Description |
-|------|-------------|
-| [venue-entity.md](diagrams/venue-entity.md) | Mermaid ER diagram for the Venue (museums/galleries) table |
