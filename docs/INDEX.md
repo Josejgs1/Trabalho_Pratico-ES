@@ -25,3 +25,4 @@
 | [golden-path.md](guidelines/golden-path.md) | Naming conventions, branch strategy, commit style, project structure, tech stack |
 | [acceptance-criteria.md](guidelines/acceptance-criteria.md) | Rules for acceptance criteria on user stories and PRs |
 | [ai-tools-access.md](guidelines/ai-tools-access.md) | Recommended AI agents and mapping libraries access status |
+| [design-decisions.md](guidelines/design-decisions.md) | Visual identity, color palette (Celadon), typography, and UI component standards |
