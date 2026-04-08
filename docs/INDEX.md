@@ -7,6 +7,7 @@
 | File | Description |
 |------|-------------|
 | [backend-setup.md](setup/backend-setup.md) | Python venv setup, dependency install, and how to run the FastAPI server |
+| [auth-api.md](setup/auth-api.md) | Authentication endpoints and request/response examples |
 | [docker-setup.md](setup/docker-setup.md) | Docker Compose setup for the PostgreSQL + PostGIS database |
 | [database-schema.md](setup/database-schema.md) | ER diagram, conventions, and detailed column reference for all tables |
 
