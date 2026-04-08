@@ -17,6 +17,7 @@
 | [adr-001-orm-choice.md](adr/adr-001-orm-choice.md) | Decision to use SQLAlchemy + GeoAlchemy2 + Pydantic over SQLModel |
 | [adr-002-ai-entry-points.md](adr/adr-002-ai-entry-points.md) | Decision to add AI assistant entry points for coding tools |
 | [adr-003-venue-modeling.md](adr/adr-003-venue-modeling.md) | Venue table modeling decisions (PK, geography, category, driver, Alembic config) |
+| [adr-004-average-rating-strategy.md](adr/adr-004-average-rating-strategy.md) | Decision to compute average ratings on demand instead of denormalizing |
 
 ## guidelines/ — Team Conventions & Standards
 
