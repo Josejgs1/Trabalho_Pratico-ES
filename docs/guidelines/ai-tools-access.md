@@ -1,3 +1,5 @@
+[← Back to Index](../INDEX.md)
+
 # Recommended Tools Access Status
 
 Guidance on AI agents and mapping libraries.

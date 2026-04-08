@@ -18,6 +18,7 @@
 | [adr-001-orm-choice.md](adr/adr-001-orm-choice.md) | Decision to use SQLAlchemy + GeoAlchemy2 + Pydantic over SQLModel |
 | [adr-002-ai-entry-points.md](adr/adr-002-ai-entry-points.md) | Decision to add AI assistant entry points for coding tools |
 | [adr-003-venue-modeling.md](adr/adr-003-venue-modeling.md) | Venue table modeling decisions (PK, geography, category, driver, Alembic config) |
+| [adr-004-average-rating-strategy.md](adr/adr-004-average-rating-strategy.md) | Decision to compute average ratings on demand instead of denormalizing |
 
 ## guidelines/ — Team Conventions & Standards
 
@@ -26,3 +27,4 @@
 | [golden-path.md](guidelines/golden-path.md) | Naming conventions, branch strategy, commit style, project structure, tech stack |
 | [acceptance-criteria.md](guidelines/acceptance-criteria.md) | Rules for acceptance criteria on user stories and PRs |
 | [ai-tools-access.md](guidelines/ai-tools-access.md) | Recommended AI agents and mapping libraries access status |
+| [design-decisions.md](guidelines/design-decisions.md) | Visual identity, color palette (Celadon), typography, and UI component standards |

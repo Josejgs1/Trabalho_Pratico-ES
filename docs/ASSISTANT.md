@@ -23,6 +23,7 @@
 - `docs/adr/adr-001-orm-choice.md` — SQLAlchemy + GeoAlchemy2 + Pydantic over SQLModel
 - `docs/adr/adr-002-ai-entry-points.md` — AI assistant entry points for coding tools
 - `docs/adr/adr-003-venue-modeling.md` — Venue table modeling decisions
+- `docs/adr/adr-004-average-rating-strategy.md` — Compute average ratings on demand, not denormalized
 
 ### Team Conventions
 - `docs/guidelines/golden-path.md` — Naming, branching, commits, project structure, tech stack
