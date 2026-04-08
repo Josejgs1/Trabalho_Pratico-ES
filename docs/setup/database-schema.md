@@ -8,6 +8,15 @@
 
 ```mermaid
 erDiagram
+    USERS {
+        UUID id PK
+        VARCHAR(255) name
+        VARCHAR(255) email
+        VARCHAR(255) password_hash
+        BOOLEAN is_active
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
     VENUES {
         UUID id PK
         VARCHAR(255) name
@@ -31,6 +40,22 @@ erDiagram
 - Pydantic schemas expose `latitude`/`longitude` instead of raw PostGIS types (see [ADR-001](../adr/adr-001-orm-choice.md)).
 
 ## Tables
+
+### users
+
+Represents registered platform users and provides the base for authentication.
+
+| Column | Type | Nullable | Purpose | User Story |
+|--------|------|----------|---------|------------|
+| `id` | UUID | PK | Unique identifier | US1 |
+| `name` | VARCHAR(255) | No | User display name | US1 |
+| `email` | VARCHAR(255) | No | Login identifier | US1 |
+| `password_hash` | VARCHAR(255) | No | Hashed password for authentication | US1 |
+| `is_active` | BOOLEAN | No | Soft activation flag for auth checks | US1 |
+| `created_at` | TIMESTAMPTZ | No | Row creation time (server default) | — |
+| `updated_at` | TIMESTAMPTZ | No | Last update time (auto-updated) | — |
+
+Unique constraint: `email`.
 
 ### venues
 
