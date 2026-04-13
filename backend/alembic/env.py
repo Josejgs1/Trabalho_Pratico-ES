@@ -5,7 +5,7 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 
 from app.core.database import Base
-from app.models import Venue  # noqa: F401
+from app.models import Record, User, Venue  # noqa: F401
 
 config = context.config
 
