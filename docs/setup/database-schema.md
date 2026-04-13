@@ -30,6 +30,18 @@ erDiagram
         TIMESTAMPTZ created_at
         TIMESTAMPTZ updated_at
     }
+    RECORDS {
+        UUID id PK
+        UUID user_id FK
+        UUID venue_id FK
+        INTEGER rating
+        TEXT comment
+        TIMESTAMPTZ visit_date
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+    USERS ||--o{ RECORDS : creates
+    VENUES ||--o{ RECORDS : receives
 ```
 
 ## Conventions
@@ -78,3 +90,26 @@ Represents museums and galleries — the core entity of KULTI.
 Spatial index: GiST on `location` (auto-created by GeoAlchemy2).
 
 See [ADR-003](../adr/adr-003-venue-modeling.md) for modeling decisions.
+
+### records
+
+Represents visit records and ratings — the association between users and venues. Each record documents a user's visit to a venue with a rating and optional comment.
+
+| Column | Type | Nullable | Purpose | User Story |
+|--------|------|----------|---------|------------||
+| `id` | UUID | PK | Unique identifier | — |
+| `user_id` | UUID | No | Foreign key to `users.id` | US5, US6 |
+| `venue_id` | UUID | No | Foreign key to `venues.id` | US5, US6 |
+| `rating` | INTEGER | No | Numeric rating (1–5 stars) | US6 |
+| `comment` | TEXT | Yes | User's written review or notes | US6 |
+| `visit_date` | TIMESTAMPTZ | Yes | Date of the museum visit | US5 |
+| `created_at` | TIMESTAMPTZ | No | Row creation time (server default) | — |
+| `updated_at` | TIMESTAMPTZ | No | Last update time (auto-updated) | — |
+
+Unique constraint: `(user_id, venue_id)` — ensures each user has at most one record per venue.
+
+Foreign keys:
+- `user_id` → `users.id`
+- `venue_id` → `venues.id`
+
+See [ADR-004](../adr/adr-004-average-rating-strategy.md) for rating aggregation strategy.
