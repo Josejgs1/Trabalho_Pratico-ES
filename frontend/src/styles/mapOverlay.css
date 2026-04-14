@@ -49,8 +49,20 @@
   gap: 0.5rem;
   min-width: 0;
   overflow-x: auto;
-  padding-bottom: 0.25rem;
+  padding: 0.25rem 0;
   scrollbar-width: none;
+}
+
+.carousel-list.carousel-fade-left {
+  mask-image: linear-gradient(to right, transparent, black 1.5rem, black 100%);
+}
+
+.carousel-list.carousel-fade-right {
+  mask-image: linear-gradient(to right, black 0%, black calc(100% - 1.5rem), transparent);
+}
+
+.carousel-list.carousel-fade-left.carousel-fade-right {
+  mask-image: linear-gradient(to right, transparent, black 1.5rem, black calc(100% - 1.5rem), transparent);
 }
 
 .carousel-list::-webkit-scrollbar {
@@ -67,11 +79,11 @@
   cursor: pointer;
   display: flex;
   flex-shrink: 0;
-  font-size: 1rem;
-  height: 1.5rem;
+  font-size: 0.875rem;
+  height: 1.75rem;
   justify-content: center;
   line-height: 1;
-  width: 1.5rem;
+  width: 1.75rem;
 }
 
 .carousel-arrow:hover {
