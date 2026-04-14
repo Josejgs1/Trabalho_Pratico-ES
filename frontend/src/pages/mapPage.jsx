@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import Map, { Marker, Popup } from "react-map-gl/mapbox";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Map, { Marker, NavigationControl, Popup } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import MapOverlay from "../components/map/mapOverlay.jsx";
 import { fetchVenues } from "../services/venueService.js";
 import "../styles/mapPage.css";
 
@@ -10,9 +11,16 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 // Belo Horizonte center
 const INITIAL_VIEW = { longitude: -43.9378, latitude: -19.9191, zoom: 12 };
 
+// Drawer width (33.33vw) + left margin (1rem) + gap
+const drawerPadding = () => window.innerWidth * 0.3333 + 32;
+
 export default function MapPage() {
+  const mapRef = useRef(null);
   const [venues, setVenues] = useState([]);
   const [hovered, setHovered] = useState(null);
+  const [search, setSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     fetchVenues()
@@ -20,15 +28,63 @@ export default function MapPage() {
       .catch((err) => console.error("Failed to load venues:", err));
   }, []);
 
+  const categories = useMemo(
+    () => [...new Set(venues.map((v) => v.category))].sort(),
+    [venues],
+  );
+
+  const filtered = useMemo(() => {
+    let result = venues;
+    if (activeCategory) result = result.filter((v) => v.category === activeCategory);
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((v) => v.name.toLowerCase().includes(q));
+    }
+    return result;
+  }, [venues, activeCategory, search]);
+
+  const openDrawer = useCallback((venue) => {
+    setDrawerOpen(true);
+    const map = mapRef.current;
+    if (!map) return;
+    const px = map.project([venue.longitude, venue.latitude]);
+    if (px.x < drawerPadding()) {
+      map.easeTo({
+        center: [venue.longitude, venue.latitude],
+        padding: { left: drawerPadding(), top: 0, right: 0, bottom: 0 },
+        duration: 400,
+      });
+    }
+  }, []);
+
+  const closeDrawer = useCallback(() => {
+    setDrawerOpen(false);
+    const map = mapRef.current;
+    if (!map) return;
+    const center = map.getCenter();
+    map.easeTo({ center, padding: { left: 0, top: 0, right: 0, bottom: 0 }, duration: 400 });
+  }, []);
+
   return (
     <div className="map-wrapper">
+      <MapOverlay
+        search={search}
+        onSearchChange={setSearch}
+        categories={categories}
+        activeCategory={activeCategory}
+        onCategorySelect={setActiveCategory}
+        drawerOpen={drawerOpen}
+      />
       <Map
+        ref={mapRef}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={INITIAL_VIEW}
         mapStyle="mapbox://styles/mapbox/light-v11"
         style={{ width: "100%", height: "100vh" }}
+        onClick={closeDrawer}
       >
-        {venues.map((venue) => (
+        <NavigationControl position="bottom-right" showCompass={false} />
+        {filtered.map((venue) => (
           <Marker
             key={venue.id}
             longitude={venue.longitude}
@@ -40,6 +96,10 @@ export default function MapPage() {
               aria-label={venue.name}
               onMouseEnter={() => setHovered(venue)}
               onMouseLeave={() => setHovered(null)}
+              onClick={(e) => {
+                e.stopPropagation();
+                openDrawer(venue);
+              }}
             />
           </Marker>
         ))}
