@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Map, { Marker, NavigationControl, Popup } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import { Stamp, User } from "@phosphor-icons/react";
 import MapOverlay from "../components/map/mapOverlay.jsx";
 import { KultiLogo } from "../components/brand/kultiLogo.jsx";
 import { fetchVenues } from "../services/venueService.js";
@@ -76,6 +77,15 @@ export default function MapPage() {
       <div className="map-logo">
         <KultiLogo className="map-logo-icon" />
         <span>KULTI</span>
+      </div>
+      <div className="map-top-right">
+        <button className="passport-button">
+          <Stamp size={18} weight="regular" />
+          Meu Passaporte
+        </button>
+        <button className="profile-button">
+          <User size={18} weight="regular" />
+        </button>
       </div>
       <MapOverlay
         search={search}
