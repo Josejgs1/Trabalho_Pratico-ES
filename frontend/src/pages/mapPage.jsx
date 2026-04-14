@@ -11,6 +11,11 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 // Belo Horizonte center
 const INITIAL_VIEW = { longitude: -43.9378, latitude: -19.9191, zoom: 12 };
 
+const MAX_BOUNDS = [
+  [-44.3, -20.1],  // southwest
+  [-43.8, -19.8],  // northeast
+];
+
 // Drawer width (33.33vw) + left margin (1rem) + gap
 const drawerPadding = () => window.innerWidth * 0.3333 + 32;
 
@@ -80,6 +85,7 @@ export default function MapPage() {
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={INITIAL_VIEW}
         mapStyle="mapbox://styles/mapbox/light-v11"
+        maxBounds={MAX_BOUNDS}
         style={{ width: "100%", height: "100vh" }}
         onClick={closeDrawer}
       >
