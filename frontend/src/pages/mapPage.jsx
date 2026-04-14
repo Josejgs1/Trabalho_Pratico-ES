@@ -94,7 +94,7 @@ export default function MapPage() {
         style={{ width: "100%", height: "100vh" }}
         onClick={closeDrawer}
       >
-        <NavigationControl position="bottom-right" showCompass={false} />
+        <NavigationControl position="bottom-right" />
         {filtered.map((venue) => (
           <Marker
             key={venue.id}
