@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Map, { Marker, Popup } from "react-map-gl/mapbox";
+import Map, { Marker, NavigationControl, Popup } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { fetchVenues } from "../services/venueService.js";
@@ -34,6 +34,7 @@ export default function MapPage() {
         maxBounds={MAX_BOUNDS}
         style={{ width: "100%", height: "100vh" }}
       >
+        <NavigationControl position="bottom-right" />
         {venues.map((venue) => (
           <Marker
             key={venue.id}
