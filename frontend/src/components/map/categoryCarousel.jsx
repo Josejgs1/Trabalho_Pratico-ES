@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import "../../styles/mapOverlay.css";
 
 export default function CategoryCarousel({ categories, active, onSelect }) {
@@ -28,7 +29,7 @@ export default function CategoryCarousel({ categories, active, onSelect }) {
     <div className="category-carousel">
       {canScrollLeft && (
         <button className="carousel-arrow carousel-arrow--left" onClick={() => scroll(-1)} aria-label="Scroll left">
-          <svg width="12" height="12" viewBox="0 0 12 12"><path d="M8 1L3 6l5 5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <CaretLeft size={14} weight="bold" />
         </button>
       )}
       <div className={`carousel-list${canScrollLeft ? " carousel-fade-left" : ""}${canScrollRight ? " carousel-fade-right" : ""}`} ref={listRef}>
@@ -44,7 +45,7 @@ export default function CategoryCarousel({ categories, active, onSelect }) {
       </div>
       {canScrollRight && (
         <button className="carousel-arrow carousel-arrow--right" onClick={() => scroll(1)} aria-label="Scroll right">
-          <svg width="12" height="12" viewBox="0 0 12 12"><path d="M4 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <CaretRight size={14} weight="bold" />
         </button>
       )}
     </div>
