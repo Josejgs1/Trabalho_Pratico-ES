@@ -3,6 +3,7 @@ import Map, { Marker, NavigationControl, Popup } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import MapOverlay from "../components/map/mapOverlay.jsx";
+import { KultiLogo } from "../components/brand/kultiLogo.jsx";
 import { fetchVenues } from "../services/venueService.js";
 import "../styles/mapPage.css";
 
@@ -72,6 +73,10 @@ export default function MapPage() {
 
   return (
     <div className="map-wrapper">
+      <div className="map-logo">
+        <KultiLogo className="map-logo-icon" />
+        <span>KULTI</span>
+      </div>
       <MapOverlay
         search={search}
         onSearchChange={setSearch}
