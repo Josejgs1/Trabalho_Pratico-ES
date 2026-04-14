@@ -63,3 +63,33 @@
   font-size: 0.8125rem;
   margin: 0;
 }
+
+/* Logo watermark */
+.map-logo {
+  align-items: center;
+  color: var(--color-text-obsidian);
+  display: flex;
+  filter: drop-shadow(0 0 6px var(--color-surface-white))
+    drop-shadow(0 0 12px var(--color-surface-white));
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  gap: 0.375rem;
+  letter-spacing: 0.15em;
+  pointer-events: none;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  z-index: 1;
+}
+
+.map-logo-icon {
+  display: block;
+  height: 28px;
+  vertical-align: middle;
+  width: 28px;
+}
+
+.map-logo-icon path {
+  fill: var(--color-text-obsidian);
+}
