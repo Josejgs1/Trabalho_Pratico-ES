@@ -34,7 +34,8 @@ export default function MapPage() {
         maxBounds={MAX_BOUNDS}
         style={{ width: "100%", height: "100vh" }}
       >
-        <NavigationControl position="bottom-right" />
+        <NavigationControl position="bottom-right" showCompass={false} />
+        <NavigationControl position="bottom-right" showZoom={false} visualizePitch />
         {venues.map((venue) => (
           <Marker
             key={venue.id}
