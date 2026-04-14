@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/auth": "http://localhost:8000",
+      "/venues": "http://localhost:8000",
     },
   },
 });
