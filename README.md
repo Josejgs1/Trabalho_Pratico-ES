@@ -22,6 +22,16 @@ KULTI é uma plataforma web criada para admiradores de arte e turistas que veem 
 
 A documentação do projeto está disponível em [docs/INDEX.md](docs/INDEX.md) (em inglês).
 
+## Como Executar
+
+Após a configuração inicial ([SETUP.md](SETUP.md)), inicie todo o projeto com:
+
+```bash
+./start.sh
+```
+
+Isso sobe o banco de dados, o backend e o frontend em um único comando. Use `Ctrl+C` para encerrar todos os serviços.
+
 ## User Stories (MVP)
 1. Como visitante da plataforma, quero criar uma conta para salvar minhas atividades e preferências.
 2. Como usuário da plataforma, quero visualizar no mapa museus e galerias próximos para descobrir locais de interesse.
