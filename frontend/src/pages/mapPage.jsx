@@ -105,7 +105,7 @@ export default function MapPage() {
         ref={mapRef}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={INITIAL_VIEW}
-        mapStyle="mapbox://styles/mapbox/light-v11"
+        mapStyle="mapbox://styles/kauantp/cmof2thkt003u01qpfwrb1v0i"
         maxBounds={MAX_BOUNDS}
         style={{ width: "100%", height: "100vh" }}
         onClick={closeDrawer}
