@@ -118,9 +118,10 @@ export default function MapPage() {
             longitude={venue.longitude}
             latitude={venue.latitude}
             anchor="center"
+            style={{ zIndex: selectedVenueId === venue.id ? 2 : 1 }}
           >
             <span
-              className="venue-marker"
+              className={`venue-marker${selectedVenueId === venue.id ? " venue-marker--selected" : ""}`}
               aria-label={venue.name}
               onMouseEnter={() => setHovered(venue)}
               onMouseLeave={() => setHovered(null)}
