@@ -126,7 +126,7 @@
 /* Passport button */
 .passport-button {
   align-items: center;
-  background: var(--color-text-obsidian);
+  background: var(--color-primary-sage);
   border: none;
   border-radius: 999px;
   box-shadow: 0 2px 6px rgba(26, 27, 26, 0.2);
@@ -142,7 +142,7 @@
 }
 
 .passport-button:hover {
-  background: var(--color-accent-walnut);
+  background: var(--color-primary-glaze);
 }
 
 /* Hide Mapbox logo (attribution text on the right is kept) */

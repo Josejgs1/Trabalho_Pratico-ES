@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { MapPin, Phone, Globe, Copy, ArrowSquareOut, Heart, Stamp } from "@phosphor-icons/react";
+import { MapPin, Phone, Globe, Copy, ArrowSquareOut, Heart, Star, Stamp } from "@phosphor-icons/react";
 import { fetchVenueById } from "../../services/venueService.js";
 
 function InfoRow({ icon, text, href, onCopy }) {
@@ -101,7 +101,16 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
 
       <div className="venue-detail-body">
         <div className="venue-detail-actions">
-          <button className="venue-action-btn venue-action-btn--primary">
+          <div className="venue-rating">
+            <span className="venue-rating-score">4,8</span>
+            <span className="venue-rating-stars">
+              {[1,2,3,4,5].map(i => (
+                <Star key={i} size={18} weight="fill" className="venue-rating-star" />
+              ))}
+            </span>
+            <span className="venue-rating-count">(2.158)</span>
+          </div>
+          <button className="venue-passport-btn" title="Registrar visita e avaliar">
             <Stamp size={18} weight="regular" />
             Registrar visita
           </button>
