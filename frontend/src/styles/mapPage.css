@@ -144,3 +144,8 @@
 .passport-button:hover {
   background: var(--color-accent-walnut);
 }
+
+/* Hide Mapbox logo (attribution text on the right is kept) */
+.mapboxgl-ctrl-logo {
+  display: none !important;
+}
