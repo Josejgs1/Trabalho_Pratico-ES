@@ -5,6 +5,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { Stamp, User } from "@phosphor-icons/react";
 import MapOverlay from "../components/map/mapOverlay.jsx";
 import VenueDrawerContent from "../components/map/venueDrawerContent.jsx";
+import VenueListContent from "../components/map/venueListContent.jsx";
 import { KultiLogo } from "../components/brand/kultiLogo.jsx";
 import { fetchVenues } from "../services/venueService.js";
 import "../styles/mapPage.css";
@@ -76,6 +77,20 @@ export default function MapPage() {
     map.easeTo({ center, padding: { left: 0, top: 0, right: 0, bottom: 0 }, duration: 400 });
   }, []);
 
+  const handleCategorySelect = useCallback((cat) => {
+    const next = activeCategory === cat ? null : cat;
+    setActiveCategory(next);
+    setSelectedVenueId(null);
+    setDrawerOpen(!!next);
+    if (!next) {
+      const map = mapRef.current;
+      if (map) {
+        const center = map.getCenter();
+        map.easeTo({ center, padding: { left: 0, top: 0, right: 0, bottom: 0 }, duration: 400 });
+      }
+    }
+  }, [activeCategory]);
+
   return (
     <div className="map-wrapper">
       <div className="map-logo">
@@ -96,10 +111,14 @@ export default function MapPage() {
         onSearchChange={setSearch}
         categories={categories}
         activeCategory={activeCategory}
-        onCategorySelect={setActiveCategory}
+        onCategorySelect={handleCategorySelect}
         drawerOpen={drawerOpen}
       >
-        {selectedVenueId && <VenueDrawerContent venueId={selectedVenueId} onCategorySelect={setActiveCategory} activeCategory={activeCategory} />}
+        {selectedVenueId ? (
+          <VenueDrawerContent venueId={selectedVenueId} onCategorySelect={handleCategorySelect} activeCategory={activeCategory} />
+        ) : activeCategory ? (
+          <VenueListContent venues={filtered} category={activeCategory} onVenueClick={openDrawer} />
+        ) : null}
       </MapOverlay>
       <Map
         ref={mapRef}
