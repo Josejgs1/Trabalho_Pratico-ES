@@ -99,7 +99,7 @@ export default function MapPage() {
         onCategorySelect={setActiveCategory}
         drawerOpen={drawerOpen}
       >
-        {selectedVenueId && <VenueDrawerContent venueId={selectedVenueId} onCategorySelect={setActiveCategory} />}
+        {selectedVenueId && <VenueDrawerContent venueId={selectedVenueId} onCategorySelect={setActiveCategory} activeCategory={activeCategory} />}
       </MapOverlay>
       <Map
         ref={mapRef}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { MapPin, Phone, Globe, Copy, ArrowSquareOut } from "@phosphor-icons/react";
+import { MapPin, Phone, Globe, Copy, ArrowSquareOut, Heart, Stamp } from "@phosphor-icons/react";
 import { fetchVenueById } from "../../services/venueService.js";
 
 function InfoRow({ icon, text, href, onCopy }) {
@@ -30,13 +30,14 @@ function InfoRow({ icon, text, href, onCopy }) {
   );
 }
 
-export default function VenueDrawerContent({ venueId, onCategorySelect }) {
+export default function VenueDrawerContent({ venueId, onCategorySelect, activeCategory }) {
   const [venue, setVenue] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [lightbox, setLightbox] = useState(false);
   const [tab, setTab] = useState("about");
   const [toast, setToast] = useState(false);
+  const [wishlisted, setWishlisted] = useState(false);
   const toastTimer = useRef(null);
 
   const showToast = (text) => {
@@ -68,11 +69,18 @@ export default function VenueDrawerContent({ venueId, onCategorySelect }) {
         {venue.image_url && (
           <img src={venue.image_url} alt={venue.name} className="venue-detail-image" />
         )}
+        <button
+          className={`venue-detail-wishlist${wishlisted ? " active" : ""}`}
+          onClick={(e) => { e.stopPropagation(); setWishlisted(w => !w); }}
+          title="Adicionar à wishlist"
+        >
+          <Heart size={20} weight={wishlisted ? "fill" : "regular"} />
+        </button>
         <div className="venue-detail-hero-overlay">
           <h2 className="venue-detail-title">{venue.name}</h2>
           <button
-            className="venue-detail-category"
-            onClick={(e) => { e.stopPropagation(); onCategorySelect?.(venue.category); }}
+            className={`venue-detail-category${activeCategory === venue.category ? " active" : ""}`}
+            onClick={(e) => { e.stopPropagation(); onCategorySelect?.(activeCategory === venue.category ? null : venue.category); }}
           >
             {venue.category}
           </button>
@@ -92,6 +100,13 @@ export default function VenueDrawerContent({ venueId, onCategorySelect }) {
       )}
 
       <div className="venue-detail-body">
+        <div className="venue-detail-actions">
+          <button className="venue-action-btn venue-action-btn--primary">
+            <Stamp size={18} weight="regular" />
+            Registrar visita
+          </button>
+        </div>
+
         <div className="venue-detail-tabs">
           <button className={`venue-detail-tab${tab === "about" ? " active" : ""}`} onClick={() => setTab("about")}>Sobre</button>
           <button className={`venue-detail-tab${tab === "reviews" ? " active" : ""}`} onClick={() => setTab("reviews")}>Avaliações</button>
