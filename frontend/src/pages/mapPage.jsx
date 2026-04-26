@@ -4,6 +4,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { Stamp, User } from "@phosphor-icons/react";
 import MapOverlay from "../components/map/mapOverlay.jsx";
+import VenueDrawerContent from "../components/map/venueDrawerContent.jsx";
 import { KultiLogo } from "../components/brand/kultiLogo.jsx";
 import { fetchVenues } from "../services/venueService.js";
 import "../styles/mapPage.css";
@@ -28,6 +29,7 @@ export default function MapPage() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedVenueId, setSelectedVenueId] = useState(null);
 
   useEffect(() => {
     fetchVenues()
@@ -52,6 +54,7 @@ export default function MapPage() {
 
   const openDrawer = useCallback((venue) => {
     setDrawerOpen(true);
+    setSelectedVenueId(venue.id);
     const map = mapRef.current;
     if (!map) return;
     const px = map.project([venue.longitude, venue.latitude]);
@@ -66,6 +69,7 @@ export default function MapPage() {
 
   const closeDrawer = useCallback(() => {
     setDrawerOpen(false);
+    setSelectedVenueId(null);
     const map = mapRef.current;
     if (!map) return;
     const center = map.getCenter();
@@ -94,7 +98,9 @@ export default function MapPage() {
         activeCategory={activeCategory}
         onCategorySelect={setActiveCategory}
         drawerOpen={drawerOpen}
-      />
+      >
+        {selectedVenueId && <VenueDrawerContent venueId={selectedVenueId} onCategorySelect={setActiveCategory} activeCategory={activeCategory} />}
+      </MapOverlay>
       <Map
         ref={mapRef}
         mapboxAccessToken={MAPBOX_TOKEN}
@@ -112,9 +118,10 @@ export default function MapPage() {
             longitude={venue.longitude}
             latitude={venue.latitude}
             anchor="center"
+            style={{ zIndex: selectedVenueId === venue.id ? 2 : 1 }}
           >
             <span
-              className="venue-marker"
+              className={`venue-marker${selectedVenueId === venue.id ? " venue-marker--selected" : ""}`}
               aria-label={venue.name}
               onMouseEnter={() => setHovered(venue)}
               onMouseLeave={() => setHovered(null)}
