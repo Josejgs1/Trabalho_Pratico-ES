@@ -202,6 +202,7 @@
 .venue-detail-image {
   aspect-ratio: 16 / 9;
   border-radius: 0;
+  color: transparent;
   display: block;
   object-fit: cover;
   width: 100%;
@@ -227,7 +228,9 @@
 }
 
 .venue-detail-wishlist.active {
-  color: white;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.95);
+  color: var(--color-text-obsidian);
 }
 
 .venue-detail-hero-overlay {  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
