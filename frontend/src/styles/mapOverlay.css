@@ -6,7 +6,7 @@
   pointer-events: none;
   position: absolute;
   top: 1rem;
-  z-index: 1;
+  z-index: 10;
 }
 
 .map-overlay > * {
@@ -285,7 +285,7 @@
 }
 
 .venue-rating-star {
-  color: #f5a623;
+  color: var(--color-text-obsidian);
 }
 
 .venue-rating-count {
