@@ -1,26 +1,48 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import or_
-from app.models import Venue
 import uuid
 
+from geoalchemy2 import Geometry
+from geoalchemy2.functions import ST_X, ST_Y
+from sqlalchemy import cast, select
+from sqlalchemy.orm import Session
 
-def get_venue_by_id(db: Session, venue_id: uuid.UUID) -> Venue | None:
-    """Fetch a single venue by ID."""
-    return db.query(Venue).filter(Venue.id == venue_id).first()
+from app.models import Venue
+from app.schemas import VenueRead
+
+_geom = cast(Venue.location, Geometry)
 
 
-def get_venues(db: Session, name: str | None = None, category: str | None = None) -> list[Venue]:
-    """
-    Fetch venues filtered by name and/or category.
-    If no filters are provided, returns all venues.
-    """
+def _to_read(row) -> VenueRead:
+    venue, lon, lat = row
+    return VenueRead(
+        id=venue.id,
+        name=venue.name,
+        description=venue.description,
+        category=venue.category,
+        address=venue.address,
+        latitude=lat,
+        longitude=lon,
+        phone=venue.phone,
+        website=venue.website,
+        image_url=venue.image_url,
+        created_at=venue.created_at,
+        updated_at=venue.updated_at,
+    )
 
-    query = db.query(Venue)
 
+def list_all(
+    db: Session,
+    name: str | None = None,
+    category: str | None = None,
+) -> list[VenueRead]:
+    stmt = select(Venue, ST_X(_geom), ST_Y(_geom))
     if name:
-        query = query.filter(Venue.name.ilike(f"%{name}%"))
-
+        stmt = stmt.where(Venue.name.ilike(f"%{name}%"))
     if category:
-        query = query.filter(Venue.category.ilike(f"%{category}%"))
+        stmt = stmt.where(Venue.category.ilike(f"%{category}%"))
+    return [_to_read(row) for row in db.execute(stmt).all()]
 
-    return query.all()
+
+def get_by_id(db: Session, venue_id: uuid.UUID) -> VenueRead | None:
+    stmt = select(Venue, ST_X(_geom), ST_Y(_geom)).where(Venue.id == venue_id)
+    row = db.execute(stmt).first()
+    return _to_read(row) if row else None

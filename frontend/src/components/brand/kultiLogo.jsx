@@ -3,7 +3,7 @@ export function KultiLogo({ className = "" }) {
     <svg
       width="80"
       height="80"
-      viewBox="0 0 80 80"
+      viewBox="8 8 50 56"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
