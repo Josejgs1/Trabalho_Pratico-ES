@@ -15,8 +15,8 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const INITIAL_VIEW = { longitude: -43.9378, latitude: -19.9191, zoom: 12 };
 
 const MAX_BOUNDS = [
-  [-44.3, -20.1],  // southwest
-  [-43.8, -19.8],  // northeast
+  [-44.23, -20.14],  // southwest (includes Inhotim)
+  [-43.90, -19.84],  // northeast
 ];
 
 // Drawer width (33.33vw) + left margin (1rem) + gap
