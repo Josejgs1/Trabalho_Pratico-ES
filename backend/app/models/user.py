@@ -29,3 +29,4 @@ class User(Base):
 
     # Relationships
     records: Mapped[list["Record"]] = relationship("Record", back_populates="user")
+    wishlists: Mapped[list["Wishlist"]] = relationship("Wishlist", back_populates="user")
