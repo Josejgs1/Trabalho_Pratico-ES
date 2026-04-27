@@ -15,15 +15,15 @@ function InfoRow({ icon, text, href, onCopy }) {
       <span className="venue-info-icon">{icon}</span>
       <span className="venue-info-text">{text}</span>
       <span className="venue-info-actions">
-        {onCopy && (
-          <button className="venue-info-action" onClick={(e) => { e.stopPropagation(); onCopy(); }} title="Copiar">
-            <Copy size={15} />
-          </button>
-        )}
         {href && (
           <a className="venue-info-action" href={href} target="_blank" rel="noopener noreferrer" title="Abrir" onClick={(e) => e.stopPropagation()}>
             <ArrowSquareOut size={15} />
           </a>
+        )}
+        {onCopy && (
+          <button className="venue-info-action" onClick={(e) => { e.stopPropagation(); onCopy(); }} title="Copiar">
+            <Copy size={15} />
+          </button>
         )}
       </span>
     </div>
