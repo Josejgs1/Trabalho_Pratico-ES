@@ -1,3 +1,3 @@
 from app.services import auth
 
-__all__ = ["auth", "record"]
+__all__ = ["auth", "venue", "record"]
