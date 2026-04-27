@@ -29,8 +29,16 @@ def _to_read(row) -> VenueRead:
     )
 
 
-def list_all(db: Session) -> list[VenueRead]:
+def list_all(
+    db: Session,
+    name: str | None = None,
+    category: str | None = None,
+) -> list[VenueRead]:
     stmt = select(Venue, ST_X(_geom), ST_Y(_geom))
+    if name:
+        stmt = stmt.where(Venue.name.ilike(f"%{name}%"))
+    if category:
+        stmt = stmt.where(Venue.category.ilike(f"%{category}%"))
     return [_to_read(row) for row in db.execute(stmt).all()]
 
 
