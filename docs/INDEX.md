@@ -28,3 +28,4 @@
 | [acceptance-criteria.md](guidelines/acceptance-criteria.md) | Rules for acceptance criteria on user stories and PRs |
 | [ai-tools-access.md](guidelines/ai-tools-access.md) | Recommended AI agents and mapping libraries access status |
 | [design-decisions.md](guidelines/design-decisions.md) | Visual identity, color palette (Celadon), typography, and UI component standards |
+| [ai-suggestions-behavior.md](guidelines/ai-suggestions-behavior.md) | Logic, sequence flow, and decision-making for the Gemini-powered recommendation system |

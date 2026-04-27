@@ -5,7 +5,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class RecordCreate(BaseModel):
-    user_id: uuid.UUID
     venue_id: uuid.UUID
     rating: int = Field(ge=1, le=5, description="Rating from 1 to 5 stars")
     comment: str | None = Field(None, max_length=1000)
