@@ -12,11 +12,11 @@ import "../styles/mapPage.css";
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 // Belo Horizonte center
-const INITIAL_VIEW = { longitude: -43.9378, latitude: -19.9191, zoom: 12 };
+const INITIAL_VIEW = { longitude: -43.95, latitude: -19.9212, zoom: 11.5 };
 
 const MAX_BOUNDS = [
   [-44.23, -20.14],  // southwest (includes Inhotim)
-  [-43.90, -19.84],  // northeast
+  [-43.80, -19.84],  // northeast
 ];
 
 // Drawer width (33.33vw) + left margin (1rem) + gap

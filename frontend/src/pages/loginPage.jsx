@@ -18,7 +18,7 @@ export default function LoginPage() {
     try {
       const auth = await loginUser(credentials);
       saveAccessToken(auth.access_token);
-      setSuccess(`Welcome back, ${auth.user.name}.`);
+      window.location.replace("/");
     } catch (requestError) {
       setError(requestError.message);
     } finally {
