@@ -1,17 +1,26 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from app.models import Venue
+import uuid
 
 
-def get_venues_by_category(db: Session, category: str) -> list[Venue]:
-    """Fetch venues filtered by category."""
-    return db.query(Venue).filter(Venue.category == category).all()
+def get_venue_by_id(db: Session, venue_id: uuid.UUID) -> Venue | None:
+    """Fetch a single venue by ID."""
+    return db.query(Venue).filter(Venue.id == venue_id).first()
 
 
-def get_all_venues(db: Session) -> list[Venue]:
-    """Fetch all venues."""
-    return db.query(Venue).all()
+def get_venues(db: Session, name: str | None = None, category: str | None = None) -> list[Venue]:
+    """
+    Fetch venues filtered by name and/or category.
+    If no filters are provided, returns all venues.
+    """
 
+    query = db.query(Venue)
 
-def get_venue_by_name(db: Session, venue_name: str) -> list[Venue]:
-    """Fetch venues by name."""
-    return db.query(Venue).filter(Venue.id == venue_name).all()
+    if name:
+        query = query.filter(Venue.name.ilike(f"%{name}%"))
+
+    if category:
+        query = query.filter(Venue.category.ilike(f"%{category}%"))
+
+    return query.all()
