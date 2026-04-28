@@ -1,6 +1,7 @@
 from app.schemas.record import RecordCreate, RecordRead, RecordUpdate
 from app.schemas.user import AuthTokenRead, UserCreate, UserLogin, UserRead
 from app.schemas.venue import VenueCreate, VenueRead, VenueUpdate
+from app.schemas.wishlist import WishlistCreate, WishlistRead
 
 __all__ = [
     "AuthTokenRead",
@@ -13,4 +14,6 @@ __all__ = [
     "VenueCreate",
     "VenueRead",
     "VenueUpdate",
+    "WishlistCreate",
+    "WishlistRead",
 ]

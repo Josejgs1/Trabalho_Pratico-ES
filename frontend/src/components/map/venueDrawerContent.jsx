@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MapPin, Phone, Globe, Copy, ArrowSquareOut, Heart, Star, Stamp } from "@phosphor-icons/react";
 import { fetchVenueById } from "../../services/venueService.js";
+import { addToWishlist, removeFromWishlist, checkWishlistStatus } from "../../services/wishlistService.js";
 
 function InfoRow({ icon, text, href, onCopy }) {
   const handleRowClick = (e) => {
@@ -52,10 +53,14 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
     setLoading(true);
     setError("");
     setTab("about");
+    setWishlisted(false);
     fetchVenueById(venueId)
       .then(setVenue)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+    checkWishlistStatus(venueId)
+      .then((res) => setWishlisted(res.wishlisted))
+      .catch(() => {});
   }, [venueId]);
 
   if (loading) return <p className="drawer-status">Carregando…</p>;
@@ -71,7 +76,13 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
         )}
         <button
           className={`venue-detail-wishlist${wishlisted ? " active" : ""}`}
-          onClick={(e) => { e.stopPropagation(); setWishlisted(w => !w); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            const next = !wishlisted;
+            setWishlisted(next);
+            (next ? addToWishlist(venueId) : removeFromWishlist(venueId))
+              .catch(() => setWishlisted(!next));
+          }}
           title="Adicionar à wishlist"
         >
           <Heart size={20} weight={wishlisted ? "fill" : "regular"} />

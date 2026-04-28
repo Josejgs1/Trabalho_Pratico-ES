@@ -31,3 +31,4 @@ class Venue(Base):
 
     # Relationships
     records: Mapped[list["Record"]] = relationship("Record", back_populates="venue")
+    wishlists: Mapped[list["Wishlist"]] = relationship("Wishlist", back_populates="venue")
