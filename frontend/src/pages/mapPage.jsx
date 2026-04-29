@@ -83,7 +83,7 @@ export default function MapPage() {
         <span>KULTI</span>
       </div>
       <div className="map-top-right">
-        <button className="passport-button">
+        <button className="passport-button" onClick={() => (window.location.href = "/passport")}>
           <Stamp size={18} weight="regular" />
           Meu Passaporte
         </button>
