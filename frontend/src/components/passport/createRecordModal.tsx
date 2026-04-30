@@ -3,127 +3,207 @@ import { useEffect, useState } from "react";
 import { fetchVenues } from "../../services/venueService.js";
 import { createRecord } from "../../services/recordService.js";
 
-export function CreateRecordModal({ isOpen, onClose, onSuccess }) {
-  const [venues, setVenues] = useState([]);
-  const [form, setForm] = useState({
-    venue_id: "",
-    rating: 5,
-    comment: "",
-  });
+type CreateRecordModalProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    onSuccess: () => void;
+};
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+type Venue = {
+    id: string;
+    name: string;
+    image_url?: string;
+};
 
-  useEffect(() => {
-    if (!isOpen) return;
+type FormState = {
+    venue_id: string;
+    rating: number;
+    comment: string;
+};
 
-    async function loadVenues() {
-      try {
-        const data = await fetchVenues();
-        setVenues(data);
-      } catch {
-        setError("Failed to load venues.");
-      }
-    }
+export function CreateRecordModal({
+    isOpen,
+    onClose,
+    onSuccess,
+}: CreateRecordModalProps) {
+    const [venues, setVenues] = useState<Venue[]>([]);
+    const [query, setQuery] = useState("");
+    const [filtered, setFiltered] = useState<Venue[]>([]);
+    const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
 
-    loadVenues();
-  }, [isOpen]);
-
-  function handleChange(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
+    const [form, setForm] = useState<FormState>({
+        venue_id: "",
+        rating: 0,
+        comment: "",
     });
-  }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+    const [hoverRating, setHoverRating] = useState<number | null>(null);
 
-    try {
-      await createRecord({
-        venue_id: form.venue_id,
-        rating: Number(form.rating),
-        comment: form.comment || null,
-      });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-      onSuccess();   // 🔥 recarrega lista
-      onClose();     // fecha modal
+    useEffect(() => {
+        if (!isOpen) return;
 
-    } catch (err) {
-      setError(err.message || "Failed to create record.");
-    } finally {
-      setLoading(false);
+        async function loadVenues() {
+            try {
+                const data = await fetchVenues();
+                setVenues(data);
+            } catch {
+                setError("Falha ao carregar museus.");
+            }
+        }
+
+        loadVenues();
+    }, [isOpen]);
+
+    useEffect(() => {
+        const q = query.trim().toLowerCase();
+
+        if (q.length < 2) {
+            setFiltered([]);
+            return;
+        }
+
+        setFiltered(
+            venues.filter((v) => v.name.toLowerCase().includes(q)).slice(0, 5)
+        );
+    }, [query, venues]);
+
+    function selectVenue(v: Venue) {
+        setForm({ ...form, venue_id: v.id });
+        setQuery(v.name);
+        setSelectedVenue(v);
+        setFiltered([]);
     }
-  }
 
-  if (!isOpen) return null;
+    function handleRating(value: number) {
+        setForm({ ...form, rating: value });
+    }
 
-  return (
-    <div className="modal-overlay">
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setLoading(true);
+        setError("");
 
-      <div className="modal">
+        try {
+            await createRecord({
+                venue_id: form.venue_id,
+                rating: form.rating,
+                comment: form.comment || null,
+            });
 
-        <button className="modal-close" onClick={onClose}>
-          ✕
-        </button>
+            onSuccess();
+            onClose();
+        } catch (err) {
+            if (err instanceof Error) setError(err.message);
+            else setError("Falha ao criar avaliação.");
+        } finally {
+            setLoading(false);
+        }
+    }
 
-        <h2>Create Review</h2>
+    if (!isOpen) return null;
 
-        <form onSubmit={handleSubmit} className="modal-form">
+    return (
+        <div className="modal-overlay">
+            <div className="modal">
+                <button className="modal-close" onClick={onClose}>
+                    ✕
+                </button>
 
-          <label>
-            Venue
-            <select
-              name="venue_id"
-              value={form.venue_id}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select a venue</option>
-              {venues.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.name}
-                </option>
-              ))}
-            </select>
-          </label>
+                <h2>Nova Avaliação</h2>
 
-          <label>
-            Rating
-            <select
-              name="rating"
-              value={form.rating}
-              onChange={handleChange}
-            >
-              {[1,2,3,4,5].map((r) => (
-                <option key={r} value={r}>
-                  {r} ⭐
-                </option>
-              ))}
-            </select>
-          </label>
+                <form onSubmit={handleSubmit} className="modal-form">
 
-          <label>
-            Comment
-            <textarea
-              name="comment"
-              value={form.comment}
-              onChange={handleChange}
-              rows={4}
-            />
-          </label>
+                    {/* 🔎 AUTOCOMPLETE */}
+                    <label className="field">
+                        <span>Museu</span>
 
-          {error && <p className="modal-error">{error}</p>}
+                        <input
+                            type="text"
+                            placeholder="Busque um museu..."
+                            value={query}
+                            onChange={(e) => {
+                                setQuery(e.target.value);
+                                setSelectedVenue(null);
+                            }}
+                            className="input-clean"
+                            required
+                        />
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Create"}
-          </button>
+                        {selectedVenue && (
+                            <div className="venue-preview">
+                                <img
+                                    src={selectedVenue.image_url || "https://via.placeholder.com/60"}
+                                    alt={selectedVenue.name}
+                                />
+                                <div>
+                                    <p className="venue-name">{selectedVenue.name}</p>
+                                    <span className="venue-selected">Selected</span>
+                                </div>
+                            </div>
+                        )}
 
-        </form>
+                        {query.trim().length > 0 && filtered.length > 0 && (
+                            <div className="autocomplete">
+                                {filtered.map((v) => (
+                                    <div
+                                        key={v.id}
+                                        className="autocomplete-item"
+                                        onClick={() => selectVenue(v)}
+                                    >
+                                        {v.name}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </label>
 
-      </div>
-    </div>
-  );
+                    {/* ⭐ RATING */}
+                    <div className="field">
+                        <span>Nota</span>
+
+                        <div className="stars">
+                            {[1, 2, 3, 4, 5].map((star) => {
+                                const current = hoverRating ?? form.rating;
+
+                                return (
+                                    <span
+                                        key={star}
+                                        className={`star ${current >= star ? "filled" : ""}`}
+                                        onMouseEnter={() => setHoverRating(star)}
+                                        onMouseLeave={() => setHoverRating(null)}
+                                        onClick={() => handleRating(star)}
+                                    >
+                                        ★
+                                    </span>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* 💬 COMMENT */}
+                    <label className="field">
+                        <span>Comentário</span>
+                        <textarea
+                            name="comment"
+                            value={form.comment}
+                            onChange={(e) =>
+                                setForm({ ...form, comment: e.target.value })
+                            }
+                            placeholder="Conte sua opinião..."
+                            className="textarea-clean"
+                        />
+                    </label>
+
+                    {error && <p className="modal-error">{error}</p>}
+
+                    <button type="submit" disabled={loading}>
+                        {loading ? "Salvando..." : "Criar"}
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
 }
