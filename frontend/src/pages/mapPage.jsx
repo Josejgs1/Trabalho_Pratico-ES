@@ -15,8 +15,8 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const INITIAL_VIEW = { longitude: -43.9378, latitude: -19.9191, zoom: 12 };
 
 const MAX_BOUNDS = [
-  [-44.23, -20.14],  // southwest (includes Inhotim)
-  [-43.90, -19.84],  // northeast
+  [-44.23, -20.14],
+  [-43.90, -19.84],
 ];
 
 // Drawer width (33.33vw) + left margin (1rem) + gap
@@ -24,6 +24,7 @@ const drawerPadding = () => window.innerWidth * 0.3333 + 32;
 
 export default function MapPage() {
   const mapRef = useRef(null);
+
   const [venues, setVenues] = useState([]);
   const [hovered, setHovered] = useState(null);
   const [search, setSearch] = useState("");
@@ -31,11 +32,34 @@ export default function MapPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedVenueId, setSelectedVenueId] = useState(null);
 
+  const [initialVenueId, setInitialVenueId] = useState(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const venueId = params.get("venue");
+
+    if (venueId) {
+      setInitialVenueId(venueId);
+    }
+  }, []);
+
   useEffect(() => {
     fetchVenues()
       .then(setVenues)
       .catch((err) => console.error("Failed to load venues:", err));
   }, []);
+
+  useEffect(() => {
+    if (!initialVenueId || venues.length === 0) return;
+
+    const venue = venues.find((v) => v.id === initialVenueId);
+
+    if (venue) {
+      setTimeout(() => {
+        openDrawer(venue);
+      }, 200);
+    }
+  }, [initialVenueId, venues]);
 
   const categories = useMemo(
     () => [...new Set(venues.map((v) => v.category))].sort(),
@@ -44,20 +68,30 @@ export default function MapPage() {
 
   const filtered = useMemo(() => {
     let result = venues;
-    if (activeCategory) result = result.filter((v) => v.category === activeCategory);
+
+    if (activeCategory) {
+      result = result.filter((v) => v.category === activeCategory);
+    }
+
     if (search) {
       const q = search.toLowerCase();
-      result = result.filter((v) => v.name.toLowerCase().includes(q));
+      result = result.filter((v) =>
+        v.name.toLowerCase().includes(q),
+      );
     }
+
     return result;
   }, [venues, activeCategory, search]);
 
   const openDrawer = useCallback((venue) => {
     setDrawerOpen(true);
     setSelectedVenueId(venue.id);
+
     const map = mapRef.current;
     if (!map) return;
+
     const px = map.project([venue.longitude, venue.latitude]);
+
     if (px.x < drawerPadding()) {
       map.easeTo({
         center: [venue.longitude, venue.latitude],
@@ -70,10 +104,16 @@ export default function MapPage() {
   const closeDrawer = useCallback(() => {
     setDrawerOpen(false);
     setSelectedVenueId(null);
+
     const map = mapRef.current;
     if (!map) return;
+
     const center = map.getCenter();
-    map.easeTo({ center, padding: { left: 0, top: 0, right: 0, bottom: 0 }, duration: 400 });
+    map.easeTo({
+      center,
+      padding: { left: 0, top: 0, right: 0, bottom: 0 },
+      duration: 400,
+    });
   }, []);
 
   return (
@@ -82,15 +122,21 @@ export default function MapPage() {
         <KultiLogo className="map-logo-icon" />
         <span>KULTI</span>
       </div>
+
       <div className="map-top-right">
-        <button className="passport-button">
+        <button
+          className="passport-button"
+          onClick={() => (window.location.href = "/passport")}
+        >
           <Stamp size={18} weight="regular" />
           Meu Passaporte
         </button>
+
         <button className="profile-button">
           <User size={18} weight="regular" />
         </button>
       </div>
+
       <MapOverlay
         search={search}
         onSearchChange={setSearch}
@@ -99,8 +145,15 @@ export default function MapPage() {
         onCategorySelect={setActiveCategory}
         drawerOpen={drawerOpen}
       >
-        {selectedVenueId && <VenueDrawerContent venueId={selectedVenueId} onCategorySelect={setActiveCategory} activeCategory={activeCategory} />}
+        {selectedVenueId && (
+          <VenueDrawerContent
+            venueId={selectedVenueId}
+            onCategorySelect={setActiveCategory}
+            activeCategory={activeCategory}
+          />
+        )}
       </MapOverlay>
+
       <Map
         ref={mapRef}
         mapboxAccessToken={MAPBOX_TOKEN}
@@ -112,6 +165,7 @@ export default function MapPage() {
       >
         <NavigationControl position="bottom-right" showCompass={false} />
         <NavigationControl position="bottom-right" showZoom={false} visualizePitch />
+
         {filtered.map((venue) => (
           <Marker
             key={venue.id}
@@ -121,7 +175,9 @@ export default function MapPage() {
             style={{ zIndex: selectedVenueId === venue.id ? 2 : 1 }}
           >
             <span
-              className={`venue-marker${selectedVenueId === venue.id ? " venue-marker--selected" : ""}`}
+              className={`venue-marker${
+                selectedVenueId === venue.id ? " venue-marker--selected" : ""
+              }`}
               aria-label={venue.name}
               onMouseEnter={() => setHovered(venue)}
               onMouseLeave={() => setHovered(null)}
