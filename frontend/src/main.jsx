@@ -6,6 +6,7 @@ import "./styles/global.css";
 import "./styles/auth.css";
 import "./styles/authForm.css";
 import "./styles/passport.css";
+import "./styles/createRecordModal.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>

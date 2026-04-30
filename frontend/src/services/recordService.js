@@ -25,7 +25,7 @@ export function fetchRecordById(recordId) {
  * Create a new record
  */
 export function createRecord(data) {
-  return apiRequest("/records", {
+  return apiRequest("/records/", {
     method: "POST",
     body: JSON.stringify(data),
   });

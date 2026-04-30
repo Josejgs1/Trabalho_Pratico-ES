@@ -1,27 +1,63 @@
-export function RecordCard({ record, venue }) {
+import { useState } from "react";
+import { PencilSimple } from "@phosphor-icons/react";
+import { EditRecordModal } from "./editRecordModal";
+
+export function RecordCard({ record, venue, onUpdated }) {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  function handleCardClick() {
+    if (!venue?.id) return;
+    window.location.href = `/?venue=${venue.id}`;
+  }
+
+  function handleEditClick(e) {
+    e.stopPropagation(); // 🔥 evita abrir o mapa
+    setIsEditOpen(true);
+  }
+
   return (
-    <div className="passport-card">
-      <img
-        src={venue?.image_url || "https://via.placeholder.com/400x200"}
-        alt={venue?.name || "Venue image"}
-        className="passport-card-image"
-      />
+    <>
+      <div
+        className="passport-card clickable"
+        onClick={handleCardClick}
+      >
+        {/* ✏️ BOTÃO EDIT */}
+        <button
+          className="edit-button"
+          onClick={handleEditClick}
+        >
+          <PencilSimple size={18} />
+        </button>
 
-      <div className="passport-card-content">
-        <h3 className="passport-card-title">
-          {venue?.name || "Unknown venue"}
-        </h3>
+        <img
+          src={venue?.image_url || "https://via.placeholder.com/400x200"}
+          alt={venue?.name || "Venue image"}
+          className="passport-card-image"
+        />
 
-        <span className="passport-card-status">Visited</span>
+        <div className="passport-card-content">
+          <h3 className="passport-card-title">
+            {venue?.name || "Unknown venue"}
+          </h3>
 
-        <p className="passport-card-rating">
-          ⭐ {record.rating} / 5
-        </p>
+          <span className="passport-card-status">Visitado</span>
 
-        {record.comment && (
-          <p className="passport-card-comment">{record.comment}</p>
-        )}
+          <p className="passport-card-rating">
+            ⭐ {record.rating} / 5
+          </p>
+
+          {record.comment && (
+            <p className="passport-card-comment">{record.comment}</p>
+          )}
+        </div>
       </div>
-    </div>
+
+      <EditRecordModal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        record={record}
+        onSuccess={() => onUpdated && onUpdated()}
+      />
+    </>
   );
 }

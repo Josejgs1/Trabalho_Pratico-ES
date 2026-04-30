@@ -6,13 +6,19 @@ import { fetchVenues } from "../services/venueService.js";
 import { PassportHeader } from "../components/passport/passportHeader";
 import { RecordList } from "../components/passport/recordList";
 import { KultiLogo } from "../components/brand/kultiLogo.jsx";
-
+import { CreateRecordModal } from "../components/passport/createRecordModal";
 
 export default function PassportPage() {
   const [records, setRecords] = useState([]);
   const [venues, setVenues] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  async function reloadRecords() {
+    const data = await fetchRecords();
+    setRecords(data);
+  }
 
   useEffect(() => {
     async function loadData() {
@@ -25,7 +31,7 @@ export default function PassportPage() {
         setRecords(recordsData);
         setVenues(venuesData);
       } catch (err) {
-        setError("Failed to load your passport.");
+        setError("Falha ao carregar seu passaporte");
       } finally {
         setLoading(false);
       }
@@ -62,9 +68,9 @@ export default function PassportPage() {
           {/* 🧭 Nova avaliação */}
           <button
             className="new-record-button"
-            onClick={() => (window.location.pathname = "/new-record")}
+            onClick={() => setIsModalOpen(true)}
           >
-            + New Review
+            + Nova Avaliação
           </button>
 
         </div>
@@ -78,8 +84,18 @@ export default function PassportPage() {
         {error && <p className="passport-error">{error}</p>}
 
         {!loading && !error && (
-          <RecordList records={records} venues={venues} />
+          <RecordList
+            records={records}
+            venues={venues}
+            onUpdated={reloadRecords}
+          />
         )}
+
+        <CreateRecordModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={reloadRecords}
+        />
       </div>
     </main>
   );

@@ -81,6 +81,7 @@
   font-family: var(--font-display);
   font-size: 2.5rem;
   color: var(--color-text-obsidian);
+  font-weight: 600;
 }
 
 .passport-subtitle {
@@ -157,4 +158,42 @@
 .passport-card-comment {
   font-size: 0.9rem;
   color: var(--color-text-charcoal);
+}
+
+.passport-card.clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.passport-card.clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.passport-card {
+  position: relative;
+}
+
+.edit-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 6px;
+
+  padding: 6px;
+  cursor: pointer;
+
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.passport-card:hover .edit-button {
+  opacity: 1;
+}
+
+.edit-button:hover {
+  transform: scale(1.1);
 }

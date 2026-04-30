@@ -1,6 +1,6 @@
 import { RecordCard } from "./recordCard.jsx";
 
-export function RecordList({ records, venues }) {
+export function RecordList({ records, venues, onUpdated }) {
   function getVenue(id) {
     return venues.find((v) => v.id === id);
   }
@@ -8,7 +8,7 @@ export function RecordList({ records, venues }) {
   if (records.length === 0) {
     return (
       <p className="passport-message">
-        You haven’t visited any venues yet.
+        Você ainda não visitou nenhum museu.
       </p>
     );
   }
@@ -23,6 +23,7 @@ export function RecordList({ records, venues }) {
             key={record.id}
             record={record}
             venue={venue}
+            onUpdated={onUpdated}
           />
         );
       })}
