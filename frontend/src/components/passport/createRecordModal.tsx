@@ -7,6 +7,7 @@ type CreateRecordModalProps = {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    initialVenueId?: string;
 };
 
 type Venue = {
@@ -25,6 +26,7 @@ export function CreateRecordModal({
     isOpen,
     onClose,
     onSuccess,
+    initialVenueId
 }: CreateRecordModalProps) {
     const [venues, setVenues] = useState<Venue[]>([]);
     const [query, setQuery] = useState("");
@@ -32,7 +34,7 @@ export function CreateRecordModal({
     const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
 
     const [form, setForm] = useState<FormState>({
-        venue_id: "",
+        venue_id: initialVenueId || "",
         rating: 0,
         comment: "",
     });
@@ -41,6 +43,21 @@ export function CreateRecordModal({
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        if (!initialVenueId || venues.length === 0) return;
+
+        const venue = venues.find((v) => v.id === initialVenueId);
+
+        if (venue) {
+            setSelectedVenue(venue);
+            setQuery(venue.name);
+            setForm((prev) => ({
+                ...prev,
+                venue_id: venue.id,
+            }));
+        }
+    }, [initialVenueId, venues]);
 
     useEffect(() => {
         if (!isOpen) return;
