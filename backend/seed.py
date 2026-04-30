@@ -1,32 +1,72 @@
 import json
 import os
 from app.core.database import SessionLocal
+
+from app.models.user import User
 from app.models.venue import Venue
+from app.models.record import Record
+
 
 def seed():
-    """Seeds the database with venue data from venues.json."""
+    """Seeds the database with users, venues and records data from JSON files."""
+
     db = SessionLocal()
-    # Locate the json file relative to this script
-    json_file_path = os.path.join(os.path.dirname(__file__), 'venues.json')
+    base_dir = os.path.dirname(__file__)
+
+    users_file = os.path.join(base_dir, "users.json")
+    venues_file = os.path.join(base_dir, "venues.json")
+    records_file = os.path.join(base_dir, "records.json")
 
     try:
-        with open(json_file_path, 'r', encoding='utf-8') as f:
+        # --------------------
+        # USERS
+        # --------------------
+        with open(users_file, "r", encoding="utf-8") as f:
+            users_data = json.load(f)
+
+        for data in users_data:
+            user = User(**data)
+            db.merge(user)
+
+        print(f"Loaded {len(users_data)} users")
+
+        # --------------------
+        # VENUES
+        # --------------------
+        with open(venues_file, "r", encoding="utf-8") as f:
             venues_data = json.load(f)
 
         for data in venues_data:
-            # Using merge allows us to update existing records or insert new ones
-            # based on the UUID provided in the JSON file.
-            # GeoAlchemy2 automatically handles the WKT string for the location field.
             venue = Venue(**data)
             db.merge(venue)
 
+        print(f"Loaded {len(venues_data)} venues")
+
+        # --------------------
+        # RECORDS (DEVE SER O ÚLTIMO)
+        # --------------------
+        with open(records_file, "r", encoding="utf-8") as f:
+            records_data = json.load(f)
+
+        for data in records_data:
+            record = Record(**data)
+            db.merge(record)
+
+        print(f"Loaded {len(records_data)} records")
+
+        # --------------------
+        # COMMIT FINAL
+        # --------------------
         db.commit()
-        print(f"Successfully seeded {len(venues_data)} venues into the database.")
+        print("Seed completed successfully.")
+
     except Exception as e:
-        print(f"An error occurred during seeding: {e}")
+        print(f"Error during seed: {e}")
         db.rollback()
+
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     seed()
