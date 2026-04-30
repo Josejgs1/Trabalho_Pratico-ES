@@ -32,10 +32,8 @@ export default function MapPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedVenueId, setSelectedVenueId] = useState(null);
 
-  // 🔥 guarda venue vindo da URL
   const [initialVenueId, setInitialVenueId] = useState(null);
 
-  // 📍 lê query param
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const venueId = params.get("venue");
@@ -45,14 +43,12 @@ export default function MapPage() {
     }
   }, []);
 
-  // 📦 carrega venues
   useEffect(() => {
     fetchVenues()
       .then(setVenues)
       .catch((err) => console.error("Failed to load venues:", err));
   }, []);
 
-  // 🚀 abre drawer automaticamente
   useEffect(() => {
     if (!initialVenueId || venues.length === 0) return;
 
