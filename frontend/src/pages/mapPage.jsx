@@ -211,6 +211,70 @@ export default function MapPage() {
     if (venues.some((venue) => venue.id === selectedVenueId)) return;
     closeDrawer();
   }, [closeDrawer, loadingVenues, selectedVenueId, venues]);
+
+  useEffect(() => {
+    const query = debouncedSearch.trim();
+    const canAutoOpen = query.length >= 3 || Boolean(nearbyFilter);
+    if (loadingVenues || !canAutoOpen || venues.length !== 1) return;
+    if (loadedVenueParamsKeyRef.current !== venueParamsKey) return;
+
+    const venue = venues[0];
+    const nearbyKey = nearbyFilter
+      ? `${nearbyFilter.latitude}:${nearbyFilter.longitude}`
+      : "none";
+    const searchKey = `${query.toLowerCase()}::${nearbyKey}::${venue.id}`;
+    if (autoOpenedSearchRef.current === searchKey) return;
+
+    autoOpenedSearchRef.current = searchKey;
+    setSearchResultsOpen(false);
+    openDrawer(venue, { focus: true });
+  }, [
+    debouncedSearch,
+    loadingVenues,
+    nearbyFilter,
+    openDrawer,
+    venueParamsKey,
+    venues,
+  ]);
+
+  const categorySource = allVenues.length > 0 ? allVenues : venues;
+
+  const categories = useMemo(
+    () => [...new Set(categorySource.map((v) => v.category))].sort(),
+    [categorySource],
+  );
+
+  const searchResults = useMemo(() => {
+    if (search.trim().length < 2) return [];
+    return venues;
+  }, [search, venues]);
+
+  const showSearchResults = Boolean(
+    searchResultsOpen && searchResults.length > 1,
+  );
+
+  const handleSearchChange = useCallback((value) => {
+    setSearch(value);
+    setSearchResultsOpen(true);
+  }, []);
+
+  const handleNearbyToggle = useCallback(() => {
+    if (nearbyFilter) {
+      setNearbyFilter(null);
+      return;
+    }
+
+    const center = mapRef.current?.getCenter() ?? INITIAL_VIEW;
+    setNearbyFilter(toNearbyFilter(center));
+  }, [nearbyFilter]);
+
+  const handleSearchResultSelect = useCallback((venue) => {
+    setSearch(venue.name);
+    setDebouncedSearch(venue.name);
+    setSearchResultsOpen(false);
+    openDrawer(venue, { focus: true });
+  }, [openDrawer]);
+
   return (
     <div className="map-wrapper">
       <div className="map-logo">
