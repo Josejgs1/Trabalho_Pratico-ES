@@ -14,6 +14,11 @@
 }
 
 /* Search bar */
+.search-control {
+  position: relative;
+  width: 33.33vw;
+}
+
 .search-bar-wrapper {
   align-items: center;
   background: var(--color-surface-white);
@@ -23,7 +28,7 @@
   display: flex;
   gap: 0.5rem;
   padding: 0.625rem 1rem;
-  width: 33.33vw;
+  width: 100%;
 }
 
 .search-bar-wrapper:focus-within {
@@ -68,6 +73,61 @@
   color: var(--color-text-obsidian);
 }
 
+.search-bar-filter--active {
+  color: var(--color-primary-sage);
+}
+
+.search-results {
+  background: var(--color-surface-white);
+  border: 1px solid var(--color-border-birch);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(107, 83, 62, 0.08);
+  display: grid;
+  font-family: var(--font-ui);
+  gap: 0.125rem;
+  left: 0;
+  max-height: 19rem;
+  overflow-y: auto;
+  padding: 0.35rem;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 30;
+}
+
+.search-result-item {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-obsidian);
+  cursor: pointer;
+  display: grid;
+  font-family: var(--font-ui);
+  gap: 0.125rem;
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+}
+
+.search-result-item:hover,
+.search-result-item:focus-visible {
+  background: var(--color-bg-gallery);
+  outline: none;
+}
+
+.search-result-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.search-result-meta {
+  color: var(--color-text-charcoal);
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Category carousel */
 .category-carousel {
   align-items: center;
@@ -91,11 +151,22 @@
 }
 
 .carousel-list.carousel-fade-right {
-  mask-image: linear-gradient(to right, black 0%, black calc(100% - 1.5rem), transparent);
+  mask-image: linear-gradient(
+    to right,
+    black 0%,
+    black calc(100% - 1.5rem),
+    transparent
+  );
 }
 
 .carousel-list.carousel-fade-left.carousel-fade-right {
-  mask-image: linear-gradient(to right, transparent, black 1.5rem, black calc(100% - 1.5rem), transparent);
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 1.5rem,
+    black calc(100% - 1.5rem),
+    transparent
+  );
 }
 
 .carousel-list::-webkit-scrollbar {
@@ -233,7 +304,8 @@
   color: var(--color-text-obsidian);
 }
 
-.venue-detail-hero-overlay {  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+.venue-detail-hero-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
   bottom: 0;
   display: flex;
   flex-direction: column;
