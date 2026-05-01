@@ -19,83 +19,98 @@ const MAX_BOUNDS = [
   [-43.90, -19.84],
 ];
 
+const NEARBY_RADIUS_METERS = 3000;
+
 // Drawer width (33.33vw) + left margin (1rem) + gap
 const drawerPadding = () => window.innerWidth * 0.3333 + 32;
 
+function buildVenueParams({ search, category, nearby }) {
+  const params = {};
+  const query = search.trim();
+
+  if (query) params.search = query;
+  if (category) params.category = category;
+
+  if (nearby) {
+    params.latitude = nearby.latitude;
+    params.longitude = nearby.longitude;
+    params.radiusMeters = nearby.radiusMeters;
+  }
+
+  return params;
+}
+
+function toNearbyFilter(center) {
+  const latitude = center.lat ?? center.latitude;
+  const longitude = center.lng ?? center.longitude;
+
+  return {
+    latitude: Number(latitude.toFixed(6)),
+    longitude: Number(longitude.toFixed(6)),
+    radiusMeters: NEARBY_RADIUS_METERS,
+  };
+}
+
 export default function MapPage() {
   const mapRef = useRef(null);
+  const autoOpenedSearchRef = useRef("");
+  const loadedVenueParamsKeyRef = useRef("");
+  const requestIdRef = useRef(0);
 
   const [venues, setVenues] = useState([]);
+  const [allVenues, setAllVenues] = useState([]);
   const [hovered, setHovered] = useState(null);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [searchResultsOpen, setSearchResultsOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
+  const [nearbyFilter, setNearbyFilter] = useState(null);
+  const [loadingVenues, setLoadingVenues] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedVenueId, setSelectedVenueId] = useState(null);
 
   const [initialVenueId, setInitialVenueId] = useState(null);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const venueId = params.get("venue");
-
-    if (venueId) {
-      setInitialVenueId(venueId);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchVenues()
-      .then(setVenues)
-      .catch((err) => console.error("Failed to load venues:", err));
-  }, []);
-
-  useEffect(() => {
-    if (!initialVenueId || venues.length === 0) return;
-
-    const venue = venues.find((v) => v.id === initialVenueId);
-
-    if (venue) {
-      setTimeout(() => {
-        openDrawer(venue);
-      }, 200);
-    }
-  }, [initialVenueId, venues]);
-
-  const categories = useMemo(
-    () => [...new Set(venues.map((v) => v.category))].sort(),
-    [venues],
+  const venueParams = useMemo(
+    () => buildVenueParams({
+      search: debouncedSearch,
+      category: activeCategory,
+      nearby: nearbyFilter,
+    }),
+    [activeCategory, debouncedSearch, nearbyFilter],
   );
 
-  const filtered = useMemo(() => {
-    let result = venues;
+  const venueParamsKey = useMemo(
+    () => JSON.stringify(venueParams),
+    [venueParams],
+  );
 
-    if (activeCategory) {
-      result = result.filter((v) => v.category === activeCategory);
-    }
-
-    if (search) {
-      const q = search.toLowerCase();
-      result = result.filter((v) =>
-        v.name.toLowerCase().includes(q),
-      );
-    }
-
-    return result;
-  }, [venues, activeCategory, search]);
-
-  const openDrawer = useCallback((venue) => {
+  const openDrawer = useCallback((venue, options = {}) => {
     setDrawerOpen(true);
     setSelectedVenueId(venue.id);
 
     const map = mapRef.current;
     if (!map) return;
 
+    const padding = drawerPadding();
+    const center = [venue.longitude, venue.latitude];
+
+    if (options.focus) {
+      map.easeTo({
+        center,
+        padding: { left: padding, top: 0, right: 0, bottom: 0 },
+        zoom: Math.max(map.getZoom(), 14),
+        duration: 500,
+      });
+      return;
+    }
+
     const px = map.project([venue.longitude, venue.latitude]);
 
-    if (px.x < drawerPadding()) {
+    if (px.x < padding) {
       map.easeTo({
-        center: [venue.longitude, venue.latitude],
-        padding: { left: drawerPadding(), top: 0, right: 0, bottom: 0 },
+        center,
+        padding: { left: padding, top: 0, right: 0, bottom: 0 },
         duration: 400,
       });
     }
@@ -138,8 +153,13 @@ export default function MapPage() {
       </div>
 
       <MapOverlay
+        nearbyActive={Boolean(nearbyFilter)}
+        onNearbyToggle={handleNearbyToggle}
         search={search}
-        onSearchChange={setSearch}
+        onSearchChange={handleSearchChange}
+        searchResults={searchResults}
+        showSearchResults={showSearchResults}
+        onSearchResultSelect={handleSearchResultSelect}
         categories={categories}
         activeCategory={activeCategory}
         onCategorySelect={setActiveCategory}
@@ -164,9 +184,13 @@ export default function MapPage() {
         onClick={closeDrawer}
       >
         <NavigationControl position="bottom-right" showCompass={false} />
-        <NavigationControl position="bottom-right" showZoom={false} visualizePitch />
+        <NavigationControl
+          position="bottom-right"
+          showZoom={false}
+          visualizePitch
+        />
 
-        {filtered.map((venue) => (
+        {venues.map((venue) => (
           <Marker
             key={venue.id}
             longitude={venue.longitude}
