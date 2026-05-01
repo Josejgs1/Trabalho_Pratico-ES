@@ -131,6 +131,86 @@ export default function MapPage() {
     });
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const venueId = params.get("venue");
+
+    if (venueId) {
+      setInitialVenueId(venueId);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 250);
+
+    return () => window.clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    let ignored = false;
+
+    fetchVenues()
+      .then((data) => {
+        if (!ignored) setAllVenues(data);
+      })
+      .catch((err) => {
+        console.error("Failed to load venue categories:", err);
+      });
+
+    return () => {
+      ignored = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
+
+    setLoadingVenues(true);
+
+    fetchVenues(venueParams)
+      .then((data) => {
+        if (requestId !== requestIdRef.current) return;
+        loadedVenueParamsKeyRef.current = venueParamsKey;
+        setVenues(data);
+        if (data.length <= 1) setSearchResultsOpen(false);
+      })
+      .catch((err) => {
+        if (requestId !== requestIdRef.current) return;
+        setVenues([]);
+        console.error("Failed to load venues:", err);
+      })
+      .finally(() => {
+        if (requestId === requestIdRef.current) setLoadingVenues(false);
+      });
+  }, [venueParams, venueParamsKey]);
+
+  useEffect(() => {
+    if (!initialVenueId || venues.length === 0) return undefined;
+
+    const venue = venues.find((v) => v.id === initialVenueId);
+    if (!venue) return undefined;
+
+    const timer = window.setTimeout(() => {
+      openDrawer(venue);
+      setInitialVenueId(null);
+    }, 200);
+
+    return () => window.clearTimeout(timer);
+  }, [initialVenueId, openDrawer, venues]);
+
+  useEffect(() => {
+    if (!hovered) return;
+    if (!venues.some((venue) => venue.id === hovered.id)) setHovered(null);
+  }, [hovered, venues]);
+
+  useEffect(() => {
+    if (!selectedVenueId || loadingVenues) return;
+    if (venues.some((venue) => venue.id === selectedVenueId)) return;
+    closeDrawer();
+  }, [closeDrawer, loadingVenues, selectedVenueId, venues]);
   return (
     <div className="map-wrapper">
       <div className="map-logo">
