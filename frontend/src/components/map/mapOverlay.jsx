@@ -4,8 +4,13 @@ import SideDrawer from "./sideDrawer.jsx";
 import "../../styles/mapOverlay.css";
 
 export default function MapOverlay({
+  nearbyActive,
+  onNearbyToggle,
   search,
   onSearchChange,
+  searchResults,
+  showSearchResults,
+  onSearchResultSelect,
   categories,
   activeCategory,
   onCategorySelect,
@@ -14,7 +19,15 @@ export default function MapOverlay({
 }) {
   return (
     <div className="map-overlay">
-      <SearchBar value={search} onChange={onSearchChange} />
+      <SearchBar
+        value={search}
+        onChange={onSearchChange}
+        filterActive={nearbyActive}
+        onFilterClick={onNearbyToggle}
+        onResultSelect={onSearchResultSelect}
+        results={searchResults}
+        showResults={showSearchResults}
+      />
       <CategoryCarousel
         categories={categories}
         active={activeCategory}
