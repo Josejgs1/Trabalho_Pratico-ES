@@ -19,18 +19,12 @@ Returns all venues when no filters are provided.
 |-----------|------|----------|-------------|
 | `search` | string | No | Text search across venue text fields |
 | `category` | string | No | Exact category filter |
-| `latitude` | number | No | Center latitude for nearby search |
-| `longitude` | number | No | Center longitude for nearby search |
-| `radiusMeters` | number | No | Nearby search radius, up to 50,000 meters |
-
-`latitude`, `longitude`, and `radiusMeters` must be provided together.
 
 ### Examples
 
 ```http
 GET /venues?search=Casa
 GET /venues?category=Arte%20Contempor%C3%A2nea
-GET /venues?latitude=-19.9191&longitude=-43.9378&radiusMeters=3000
 ```
 
 Filters can be combined:
