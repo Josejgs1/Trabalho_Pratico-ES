@@ -50,7 +50,7 @@ export default function PassportPage() {
           {/* 🔙 Botão voltar */}
           <button
             className="back-button"
-            onClick={() => (window.location.pathname = "/")}
+            onClick={() => (window.location.pathname = "/map")}
           >
             ← Voltar
           </button>
@@ -58,7 +58,7 @@ export default function PassportPage() {
           {/* 🧭 Logo clicável */}
           <div
             className="passport-logo"
-            onClick={() => (window.location.pathname = "/")}
+            onClick={() => (window.location.pathname = "/map")}
             style={{ cursor: "pointer" }}
           >
             <KultiLogo />
