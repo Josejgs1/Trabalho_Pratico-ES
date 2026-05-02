@@ -39,7 +39,7 @@ function InfoRow({ icon, text, href, onCopy }) {
   };
 
   return (
-    <div className="venue-info-row" onClick={handleRowClick}>
+    <div className={`venue-info-row${href ? " venue-info-row--link" : ""}`} onClick={handleRowClick}>
       <span className="venue-info-icon">{icon}</span>
       <span className="venue-info-text">{text}</span>
       <span className="venue-info-actions">
