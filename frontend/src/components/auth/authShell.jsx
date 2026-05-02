@@ -6,11 +6,11 @@ const heroImage =
 export function AuthShell({ ariaLabel, children, footer, subtitle, title }) {
   return (
     <main className="auth-page">
-      <section className="auth-visual-panel" aria-label="KULTI visual reference">
+      <section className="auth-visual-panel" aria-label="Referência visual da KULTI">
         <div>
           <img
             src={heroImage}
-            alt="Celadon pottery displayed in a museum"
+            alt="Cerâmica celadon em exposição"
             className="auth-visual-image"
           />
         </div>

@@ -5,6 +5,17 @@ import { LoginForm } from "../components/auth/loginForm.jsx";
 import { loginUser } from "../services/authService.js";
 import { saveAccessToken } from "../services/tokenStorage.js";
 
+function loginRedirectPath() {
+  const params = new URLSearchParams(window.location.search);
+  const next = params.get("next");
+
+  if (next?.startsWith("/") && !next.startsWith("//")) {
+    return next;
+  }
+
+  return "/map";
+}
+
 export default function LoginPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,8 +29,8 @@ export default function LoginPage() {
     try {
       const auth = await loginUser(credentials);
       saveAccessToken(auth.access_token);
-      setSuccess(`Welcome back, ${auth.user.name}.`);
-      window.location.href = "/";
+      setSuccess(`Bem-vindo de volta, ${auth.user.name}.`);
+      window.location.replace(loginRedirectPath());
     } catch (requestError) {
       setError(requestError.message);
     } finally {
@@ -29,14 +40,14 @@ export default function LoginPage() {
 
   return (
     <AuthShell
-      ariaLabel="Sign in"
-      title="Welcome back"
-      subtitle="Return to your curated cultural journey"
+      ariaLabel="Entrar"
+      title="Bem-vindo de volta"
+      subtitle="Continue sua jornada cultural pela KULTI"
       footer={
         <>
-          New to KULTI?{" "}
+          Novo na KULTI?{" "}
           <a className="auth-link" href="/register">
-            Create an account
+            Crie uma conta
           </a>
         </>
       }

@@ -28,7 +28,7 @@ export function RegisterForm({ error, isSubmitting, onSubmit, success }) {
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
       <label className="auth-field">
-        <span>Name</span>
+        <span>Nome</span>
         <input
           name="name"
           value={formData.name}
@@ -47,7 +47,7 @@ export function RegisterForm({ error, isSubmitting, onSubmit, success }) {
         />
       </label>
       <label className="auth-field">
-        <span>Password</span>
+        <span>Senha</span>
         <input
           name="password"
           type="password"
@@ -60,7 +60,7 @@ export function RegisterForm({ error, isSubmitting, onSubmit, success }) {
       {error && <p className="auth-message auth-message-error">{error}</p>}
       {success && <p className="auth-message auth-message-success">{success}</p>}
       <button className="auth-submit" type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Creating account..." : "Create Account"}
+        {isSubmitting ? "Criando conta..." : "Criar conta"}
       </button>
     </form>
   );
