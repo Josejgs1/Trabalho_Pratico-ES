@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { MapPin, Phone, Globe, Copy, ArrowSquareOut, Heart, Star, Stamp } from "@phosphor-icons/react";
 import { fetchVenueById } from "../../services/venueService.js";
 import { addToWishlist, removeFromWishlist, checkWishlistStatus } from "../../services/wishlistService.js";
+import { CreateRecordModal } from "../passport/createRecordModal";
 
 function InfoRow({ icon, text, href, onCopy }) {
   const handleRowClick = (e) => {
@@ -39,6 +40,7 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
   const [tab, setTab] = useState("about");
   const [toast, setToast] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const toastTimer = useRef(null);
 
   const showToast = (text) => {
@@ -60,7 +62,7 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
       .finally(() => setLoading(false));
     checkWishlistStatus(venueId)
       .then((res) => setWishlisted(res.wishlisted))
-      .catch(() => {});
+      .catch(() => { });
   }, [venueId]);
 
   if (loading) return <p className="drawer-status">Carregando…</p>;
@@ -115,13 +117,17 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
           <div className="venue-rating">
             <span className="venue-rating-score">4,8</span>
             <span className="venue-rating-stars">
-              {[1,2,3,4,5].map(i => (
+              {[1, 2, 3, 4, 5].map(i => (
                 <Star key={i} size={18} weight="fill" className="venue-rating-star" />
               ))}
             </span>
             <span className="venue-rating-count">(2.158)</span>
           </div>
-          <button className="venue-passport-btn" title="Registrar visita e avaliar">
+          <button
+            className="venue-passport-btn"
+            title="Registrar visita e avaliar"
+            onClick={() => setIsCreateOpen(true)}
+          >
             <Stamp size={18} weight="regular" />
             Registrar visita
           </button>
@@ -137,7 +143,7 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
             <div className="venue-detail-section venue-detail-section--first">
               <InfoRow
                 icon={<MapPin size={18} />}
-                text={<address style={{fontStyle:"normal"}}>{venue.address}</address>}
+                text={<address style={{ fontStyle: "normal" }}>{venue.address}</address>}
                 onCopy={() => showToast(venue.address)}
               />
               {venue.phone && (
@@ -171,6 +177,12 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
           </div>
         )}
       </div>
+      <CreateRecordModal
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onSuccess={() => setIsCreateOpen(false)}
+        initialVenueId={venueId}
+      />
     </div>
   );
 }

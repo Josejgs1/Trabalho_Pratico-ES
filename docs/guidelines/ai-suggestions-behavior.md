@@ -18,14 +18,19 @@ sequenceDiagram
 
     User->>App: Opens "Digital Passport" Page
     Note over App: Page Load Event
-    App->>API: GET /recommendations (with Browser GPS)
-    API->>DB: Fetch nearby Venues (PostGIS Query - SRID 4326)
-    DB-->>API: Venue Metadata (Names, Categories)
-    API->>DB: Fetch User History & Wishlist
+    App->>API: GET /recommendations
+    API->>DB: Fetch User History & Wishlist (RECORDS table)
     DB-->>API: User Context
-    API->>AI: Send Prompt (Nearby Venues + User Preferences)
+    alt User has no history
+        API->>DB: Fetch Top Reviewed Venues (COUNT on RECORDS)
+        DB-->>API: Popular Venue Metadata
+    else User has history
+        API->>DB: Fetch Venues matching preferred Categories
+        DB-->>API: Context-Specific Venues
+    end
+    API->>AI: Send Prompt (Enriched Context + Popularity Data)
     AI-->>API: Return Recommended Venue Names (JSON)
-    API->>API: Validate & Match Names to Database IDs
+    API->>API: Validate & Match Names to Database UUIDs
     API-->>App: Return Curated List
     App-->>User: Display Recommendations Section
 ```
@@ -36,30 +41,27 @@ This flowchart defines the internal logic used to filter data and handle potenti
 
 ```mermaid
 graph TD
-    A[User Opens Digital Passport] --> B[App Requests Browser Geolocation]
-    B --> C{Permission Granted?}
-    C -- No --> D[Use Default City Center Coordinates]
-    C -- Yes --> E[Send Lat/Lon to API]
-    E --> F[DB Query: Find Venues within Proximity Radius]
-    F --> G{User has history?}
-    G -- Yes --> H[Extract Preferred Categories]
-    G -- No --> I[Use Default Popular Categories]
-    H --> J[Build Context-Aware Prompt]
-    I --> J
-    J --> K[Call Gemini API]
-    K --> L{Valid JSON Received?}
-    L -- Yes --> M[Validate Suggestions against DB Records]
-    L -- No --> N[Error Fallback: Return Top 3 Closest Venues]
-    M --> O[Success: Display Recommendations]
+A[User Opens Digital Passport] --> B[API: Fetch User Records & Wishlist]
+    B --> C{History or Wishlist found?}
+    C -- Yes --> D[Extract Preferred Categories & Visit Patterns]
+    C -- No --> E[DB Query: Identify Venues with Highest Review Count]
+    D --> F[Select Candidates for AI Prompt]
+    E --> F
+    F --> G[Generate Structured Prompt for Gemini]
+    G --> H[Call Gemini API]
+    H --> I{Valid JSON Received?}
+    I -- Yes --> J[Map Names back to DB UUIDs]
+    I -- No --> K[Error Fallback: Return Top 3 Most Popular Venues]
+    J --> L[Success: Display Recommendations]
 ```
 
 ## 3. Rationale & Justifications
 
 * **Hallucination Protection**: The system sends venue names and metadata to the AI but performs the ID matching on the backend. This prevents the hallucination of non-existent UUIDs, ensuring the system never attempts to display a venue that doesn't exist in the PostgreSQL database.
 
-* **Spatial Pre-Filtering**: By performing a PostGIS proximity query before calling the AI, we reduce API costs (tokens) and prevent the AI from recommending places that are geographically out of reach for the user.
+* **Popularity-Based Fallback**: For users without history, the system identifies "popular" venues by calculating the frequency of entries for each `venue_id` within the `RECORDS` table. This uses existing data without requiring new tables or columns.
 
-* **Contextual Fallback**: A fallback mechanism ensures that if the AI fails or returns invalid data, the user still receives a helpful nearby list instead of an empty screen or an error message.
+* **Consistency with ADR-004**: In alignment with ADR-004, popularity is computed on-demand via queries rather than being stored as a denormalized "rating_count" column in the `VENUES` table.
 
 * **Consistent Spatial Logic**: The logic explicitly uses the coordinates stored in the `location` column to maintain consistency with the spatial indexing strategy defined in the database schema.
 
@@ -68,3 +70,5 @@ graph TD
 * **API Response**: The Gemini API must be instructed to return data in a structured JSON format so the FastAPI backend can parse it without complex text processing.
 
 * **Data Minimization**: Only necessary metadata (Name, Category, Description) is sent to the AI to stay within free-tier rate limits and ensure faster response times.
+
+* **Popularity Query**: The backend identifies popular venues by performing a `GROUP BY venue_id` and `COUNT(*)` on the `RECORDS` table.
