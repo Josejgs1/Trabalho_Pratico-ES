@@ -165,10 +165,17 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
             </span>
             <span className="venue-rating-stars">
               {[1, 2, 3, 4, 5].map(i => (
-                <Star key={i} size={18} weight="fill" className="venue-rating-star" />
+                <Star
+                  key={i}
+                  size={18}
+                  weight={roundedAverage != null && i <= roundedAverage ? "fill" : "regular"}
+                  className="venue-rating-star"
+                />
               ))}
             </span>
-            <span className="venue-rating-count">(2.158)</span>
+            <span className="venue-rating-count">
+              {reviewsLoading ? "(...)" : `(${formatReviewCount(reviewCount)})`}
+            </span>
           </div>
           <button
             className="venue-passport-btn"
@@ -220,14 +227,79 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
 
         {tab === "reviews" && (
           <div className="venue-detail-section venue-detail-section--first">
-            <p className="venue-detail-empty">Nenhuma avaliação ainda.</p>
+            {reviewsLoading && (
+              <p className="venue-detail-empty">Carregando avaliações...</p>
+            )}
+
+            {reviewsError && !reviewsLoading && (
+              <p className="drawer-status drawer-error">{reviewsError}</p>
+            )}
+
+            {!reviewsLoading && !reviewsError && reviewCount === 0 && (
+              <p className="venue-detail-empty">Nenhuma avaliação ainda.</p>
+            )}
+
+            {!reviewsLoading && !reviewsError && reviewCount > 0 && (
+              <>
+                <div className="venue-reviews-summary">
+                  <span className="venue-reviews-summary-score">
+                    {formatRating(averageRating)}
+                  </span>
+                  <span className="venue-reviews-summary-copy">
+                    Média de {formatReviewCount(reviewCount)}
+                  </span>
+                </div>
+
+                <div className="venue-review-list">
+                  {reviewSummary.reviews.map((review) => {
+                    const reviewDate = formatReviewDate(
+                      review.visit_date ?? review.created_at,
+                    );
+
+                    return (
+                      <article className="venue-review-item" key={review.id}>
+                        <div className="venue-review-header">
+                          <div>
+                            <h3 className="venue-review-author">
+                              {review.user_name}
+                            </h3>
+                            {reviewDate && (
+                              <p className="venue-review-date">{reviewDate}</p>
+                            )}
+                          </div>
+                          <div
+                            className="venue-review-stars"
+                            aria-label={`${review.rating} de 5`}
+                          >
+                            {[1, 2, 3, 4, 5].map((i) => (
+                              <Star
+                                key={i}
+                                size={14}
+                                weight={i <= review.rating ? "fill" : "regular"}
+                                className="venue-review-star"
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="venue-review-comment">
+                          {review.comment || "Sem comentário."}
+                        </p>
+                      </article>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
       <CreateRecordModal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
-        onSuccess={() => setIsCreateOpen(false)}
+        onSuccess={() => {
+          setIsCreateOpen(false);
+          loadReviewSummary(venueId);
+        }}
         initialVenueId={venueId}
       />
     </div>
