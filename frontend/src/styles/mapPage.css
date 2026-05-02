@@ -1,5 +1,6 @@
 .map-wrapper {
   height: 100dvh;
+  overflow: hidden;
   position: relative;
   width: 100%;
 }
@@ -131,6 +132,94 @@
   border-color: var(--color-text-obsidian);
 }
 
+.profile-button--active {
+  background: var(--color-text-obsidian);
+  border-color: var(--color-text-obsidian);
+  color: var(--color-surface-white);
+}
+
+/* User drawer */
+.user-drawer {
+  background: var(--color-surface-white);
+  border: 1px solid var(--color-border-birch);
+  border-radius: 8px;
+  bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(107, 83, 62, 0.08);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: 1rem;
+  top: 4.25rem;
+  transform: translateX(0.75rem);
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0s linear 0.3s;
+  visibility: hidden;
+  width: min(22rem, calc(100vw - 2rem));
+  z-index: 11;
+}
+
+.user-drawer--open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+  transition-delay: 0s;
+  visibility: visible;
+}
+
+.user-drawer-header {
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-birch);
+  display: flex;
+  justify-content: space-between;
+  min-height: 3.5rem;
+  padding: 0.875rem 1rem;
+}
+
+.user-drawer-title {
+  color: var(--color-text-obsidian);
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 600;
+  line-height: 1;
+  margin: 0;
+}
+
+.user-drawer-close {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text-charcoal);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  padding: 0.35rem;
+}
+
+.user-drawer-close:hover {
+  background: var(--color-bg-gallery);
+  color: var(--color-text-obsidian);
+}
+
+.user-drawer-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 1rem;
+}
+
+.user-drawer-status {
+  color: var(--color-text-charcoal);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.user-drawer-error {
+  color: #8c2f22;
+}
 /* Passport button */
 .passport-button {
   align-items: center;
@@ -156,4 +245,4 @@
 /* Hide Mapbox logo (attribution text on the right is kept) */
 .mapboxgl-ctrl-logo {
   display: none !important;
-}
+}}
