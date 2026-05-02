@@ -19,97 +19,22 @@ const MAX_BOUNDS = [
   [-43.90, -19.84],
 ];
 
-const EARTH_METERS_PER_DEGREE = 111320;
-const MAX_NEARBY_RADIUS_METERS = 50000;
-const MIN_NEARBY_RADIUS_METERS = 500;
-
 // Drawer width (33.33vw) + left margin (1rem) + gap
 const drawerPadding = () => window.innerWidth * 0.3333 + 32;
 
-function buildVenueParams({ search, category, nearby }) {
+function buildVenueParams({ search, category }) {
   const params = {};
   const query = search.trim();
 
   if (query) params.search = query;
   if (category) params.category = category;
 
-  if (nearby) {
-    params.latitude = nearby.latitude;
-    params.longitude = nearby.longitude;
-    params.radiusMeters = nearby.radiusMeters;
-  }
-
   return params;
-}
-
-function distanceInMeters(from, to) {
-  const averageLatitude = ((from.lat + to.lat) * Math.PI) / 360;
-  const lngDelta = (to.lng - from.lng) * Math.cos(averageLatitude);
-  const latDelta = to.lat - from.lat;
-
-  return Math.hypot(lngDelta, latDelta) * EARTH_METERS_PER_DEGREE;
-}
-
-function viewportRadiusMeters(map, center) {
-  const bounds = map?.getBounds?.();
-  if (!bounds) return 3000;
-
-  const radius = Math.max(
-    distanceInMeters(center, bounds.getNorthEast()),
-    distanceInMeters(center, bounds.getSouthWest()),
-  );
-
-  return Math.min(
-    MAX_NEARBY_RADIUS_METERS,
-    Math.max(MIN_NEARBY_RADIUS_METERS, Math.ceil(radius)),
-  );
-}
-
-function toNearbyFilter(map, center) {
-  const latitude = center.lat ?? center.latitude;
-  const longitude = center.lng ?? center.longitude;
-
-  return {
-    latitude: Number(latitude.toFixed(6)),
-    longitude: Number(longitude.toFixed(6)),
-    radiusMeters: viewportRadiusMeters(map, { lat: latitude, lng: longitude }),
-  };
-}
-
-function fitMapToVenues(map, venues, drawerOpen) {
-  if (!map || venues.length === 0) return;
-
-  const left = drawerOpen ? drawerPadding() : 80;
-  const padding = { left, top: 80, right: 80, bottom: 80 };
-
-  if (venues.length === 1) {
-    const venue = venues[0];
-    map.easeTo({
-      center: [venue.longitude, venue.latitude],
-      padding,
-      zoom: Math.max(map.getZoom(), 13),
-      duration: 500,
-    });
-    return;
-  }
-
-  const lngs = venues.map((venue) => venue.longitude);
-  const lats = venues.map((venue) => venue.latitude);
-
-  map.fitBounds(
-    [
-      [Math.min(...lngs), Math.min(...lats)],
-      [Math.max(...lngs), Math.max(...lats)],
-    ],
-    { padding, maxZoom: 14, duration: 500 },
-  );
 }
 
 export default function MapPage() {
   const mapRef = useRef(null);
   const autoOpenedSearchRef = useRef("");
-  const drawerOpenRef = useRef(false);
-  const fitResultsAfterLoadRef = useRef(false);
   const loadedVenueParamsKeyRef = useRef("");
   const requestIdRef = useRef(0);
 
@@ -120,7 +45,6 @@ export default function MapPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [searchResultsOpen, setSearchResultsOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
-  const [nearbyFilter, setNearbyFilter] = useState(null);
   const [loadingVenues, setLoadingVenues] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedVenueId, setSelectedVenueId] = useState(null);
@@ -131,9 +55,8 @@ export default function MapPage() {
     () => buildVenueParams({
       search: debouncedSearch,
       category: activeCategory,
-      nearby: nearbyFilter,
     }),
-    [activeCategory, debouncedSearch, nearbyFilter],
+    [activeCategory, debouncedSearch],
   );
 
   const venueParamsKey = useMemo(
@@ -188,10 +111,6 @@ export default function MapPage() {
   }, []);
 
   useEffect(() => {
-    drawerOpenRef.current = drawerOpen;
-  }, [drawerOpen]);
-
-  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const venueId = params.get("venue");
 
@@ -236,12 +155,6 @@ export default function MapPage() {
         loadedVenueParamsKeyRef.current = venueParamsKey;
         setVenues(data);
         if (data.length <= 1) setSearchResultsOpen(false);
-        if (fitResultsAfterLoadRef.current) {
-          fitResultsAfterLoadRef.current = false;
-          window.setTimeout(() => {
-            fitMapToVenues(mapRef.current, data, drawerOpenRef.current);
-          }, 0);
-        }
       })
       .catch((err) => {
         if (requestId !== requestIdRef.current) return;
@@ -280,15 +193,11 @@ export default function MapPage() {
 
   useEffect(() => {
     const query = debouncedSearch.trim();
-    const canAutoOpen = query.length >= 3 || Boolean(nearbyFilter);
-    if (loadingVenues || !canAutoOpen || venues.length !== 1) return;
+    if (loadingVenues || query.length < 3 || venues.length !== 1) return;
     if (loadedVenueParamsKeyRef.current !== venueParamsKey) return;
 
     const venue = venues[0];
-    const nearbyKey = nearbyFilter
-      ? `${nearbyFilter.latitude}:${nearbyFilter.longitude}`
-      : "none";
-    const searchKey = `${query.toLowerCase()}::${nearbyKey}::${venue.id}`;
+    const searchKey = `${query.toLowerCase()}::${venue.id}`;
     if (autoOpenedSearchRef.current === searchKey) return;
 
     autoOpenedSearchRef.current = searchKey;
@@ -297,7 +206,6 @@ export default function MapPage() {
   }, [
     debouncedSearch,
     loadingVenues,
-    nearbyFilter,
     openDrawer,
     venueParamsKey,
     venues,
@@ -323,18 +231,6 @@ export default function MapPage() {
     setSearch(value);
     setSearchResultsOpen(true);
   }, []);
-
-  const handleNearbyToggle = useCallback(() => {
-    if (nearbyFilter) {
-      fitResultsAfterLoadRef.current = true;
-      setNearbyFilter(null);
-      return;
-    }
-
-    const map = mapRef.current;
-    const center = map?.getCenter() ?? INITIAL_VIEW;
-    setNearbyFilter(toNearbyFilter(map, center));
-  }, [nearbyFilter]);
 
   const handleSearchResultSelect = useCallback((venue) => {
     setSearch(venue.name);
@@ -365,8 +261,6 @@ export default function MapPage() {
       </div>
 
       <MapOverlay
-        nearbyActive={Boolean(nearbyFilter)}
-        onNearbyToggle={handleNearbyToggle}
         search={search}
         onSearchChange={handleSearchChange}
         searchResults={searchResults}

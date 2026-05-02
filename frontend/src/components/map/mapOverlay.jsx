@@ -4,8 +4,6 @@ import SideDrawer from "./sideDrawer.jsx";
 import "../../styles/mapOverlay.css";
 
 export default function MapOverlay({
-  nearbyActive,
-  onNearbyToggle,
   search,
   onSearchChange,
   searchResults,
@@ -22,8 +20,6 @@ export default function MapOverlay({
       <SearchBar
         value={search}
         onChange={onSearchChange}
-        filterActive={nearbyActive}
-        onFilterClick={onNearbyToggle}
         onResultSelect={onSearchResultSelect}
         results={searchResults}
         showResults={showSearchResults}
