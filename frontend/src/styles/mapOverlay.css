@@ -463,6 +463,10 @@
   color: var(--color-text-obsidian);
 }
 
+.venue-info-row--link:hover .venue-info-text {
+  text-decoration: underline;
+}
+
 .venue-info-icon {
   color: var(--color-text-charcoal);
   flex-shrink: 0;
