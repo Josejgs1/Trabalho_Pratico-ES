@@ -16,6 +16,7 @@
 ### Setup & Infrastructure
 - `docs/setup/backend-setup.md` — Python venv, dependencies, running FastAPI
 - `docs/setup/auth-api.md` — Authentication endpoints and request/response examples
+- `docs/setup/venues-api.md` — Venue listing, detail, search, and filter endpoints
 - `docs/setup/docker-setup.md` — Docker Compose for PostgreSQL + PostGIS
 - `docs/setup/database-schema.md` — ER diagram, conventions, and column reference for all tables
 

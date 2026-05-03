@@ -6,6 +6,9 @@ import "../../styles/mapOverlay.css";
 export default function MapOverlay({
   search,
   onSearchChange,
+  searchResults,
+  showSearchResults,
+  onSearchResultSelect,
   categories,
   activeCategory,
   onCategorySelect,
@@ -14,7 +17,13 @@ export default function MapOverlay({
 }) {
   return (
     <div className="map-overlay">
-      <SearchBar value={search} onChange={onSearchChange} />
+      <SearchBar
+        value={search}
+        onChange={onSearchChange}
+        onResultSelect={onSearchResultSelect}
+        results={searchResults}
+        showResults={showSearchResults}
+      />
       <CategoryCarousel
         categories={categories}
         active={activeCategory}

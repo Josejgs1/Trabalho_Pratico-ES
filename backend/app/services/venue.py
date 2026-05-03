@@ -2,7 +2,7 @@ import uuid
 
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import ST_X, ST_Y
-from sqlalchemy import cast, func, select
+from sqlalchemy import cast, func, select, or_
 from sqlalchemy.orm import Session
 
 from app.models import Record, User, Venue
@@ -31,14 +31,22 @@ def _to_read(row) -> VenueRead:
 
 def list_all(
     db: Session,
-    name: str | None = None,
+    search: str | None = None,
     category: str | None = None,
 ) -> list[VenueRead]:
     stmt = select(Venue, ST_X(_geom), ST_Y(_geom))
-    if name:
-        stmt = stmt.where(Venue.name.ilike(f"%{name}%"))
+    if search and search.strip():
+        term = f"%{search.strip()}%"
+        stmt = stmt.where(
+            or_(
+                Venue.name.ilike(term),
+                Venue.address.ilike(term),
+                Venue.category.ilike(term),
+                Venue.description.ilike(term),
+            )
+        )
     if category:
-        stmt = stmt.where(Venue.category.ilike(f"%{category}%"))
+        stmt = stmt.where(Venue.category == category)
     return [_to_read(row) for row in db.execute(stmt).all()]
 
 

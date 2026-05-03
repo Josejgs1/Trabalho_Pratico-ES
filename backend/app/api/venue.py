@@ -1,6 +1,7 @@
 import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.api.auth import get_current_user
@@ -11,13 +12,22 @@ from app.services import venue as venue_service
 
 router = APIRouter(prefix="/venues", tags=["venues"])
 
+SearchFilter = Annotated[str | None, Query(max_length=255)]
+CategoryFilter = Annotated[str | None, Query(max_length=100)]
+
 
 @router.get("", response_model=list[VenueRead])
 def list_venues(
-    db: Session = Depends(get_db),
-    _current_user: User = Depends(get_current_user),
-) -> list[VenueRead]:
-    return venue_service.list_all(db)
+      search: SearchFilter = None,
+      category: CategoryFilter = None,
+      db: Session = Depends(get_db),
+      _current_user: User = Depends(get_current_user),
+  ) -> list[VenueRead]:
+      return venue_service.list_all(
+          db,
+          search=search,
+          category=category,
+      )
 
 
 @router.get("/{venue_id}", response_model=VenueRead)
