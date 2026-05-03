@@ -7,8 +7,9 @@ export default defineConfig({
   server: {
     proxy: {
       "/auth": "http://localhost:8000",
-      "/venues": "http://localhost:8000",
+      "/recommendations": "http://localhost:8000",
       "/records": "http://localhost:8000",
+      "/venues": "http://localhost:8000",
       "/wishlists": "http://localhost:8000"
     },
   },

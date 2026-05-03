@@ -3,6 +3,12 @@ set -e
 
 trap 'kill 0' EXIT
 
+if [ -f .env ]; then
+  set -a
+  source .env
+  set +a
+fi
+
 echo "Starting database..."
 docker compose up -d
 
