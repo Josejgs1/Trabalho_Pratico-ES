@@ -74,6 +74,20 @@
   color: var(--color-primary-sage);
 }
 
+.auth-check-page {
+  align-items: center;
+  background: var(--color-bg-gallery);
+  color: var(--color-text-charcoal);
+  display: flex;
+  font-family: var(--font-ui);
+  justify-content: center;
+  min-height: 100dvh;
+}
+
+.auth-check-page p {
+  margin: 0;
+}
+
 @media (min-width: 1024px) {
   .auth-visual-panel {
     align-items: center;

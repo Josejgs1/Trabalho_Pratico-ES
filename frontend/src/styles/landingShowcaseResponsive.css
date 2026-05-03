@@ -1,0 +1,45 @@
+@media (max-width: 900px) {
+  .landing-showcase {
+    z-index: 0;
+  }
+
+  .landing-feature-card {
+    right: -18vw;
+    top: 60vh;
+    width: 86vw;
+  }
+
+  .landing-feature-card--1 {
+    right: -32vw;
+    top: 63vh;
+  }
+
+  .landing-feature-card--2,
+  .landing-feature-card--3 {
+    opacity: 0;
+  }
+
+  .landing-feature-card img {
+    height: 14rem;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 720px) {
+  .landing-feature-card {
+    top: 18vh;
+  }
+
+  .landing-feature-card img {
+    height: 18rem;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 720px) {
+  .landing-feature-card {
+    top: 66vh;
+  }
+
+  .landing-feature-card img {
+    height: 10rem;
+  }
+}

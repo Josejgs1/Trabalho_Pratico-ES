@@ -4,7 +4,7 @@ import { removeFromWishlist } from "../../services/wishlistService.js";
 export function WishlistCard({ item, venue, onRemoved }) {
   function handleCardClick() {
     if (!venue?.id) return;
-    window.location.href = `/?venue=${venue.id}`;
+    window.location.href = `/map?venue=${venue.id}`;
   }
 
   function handleRemove(e) {

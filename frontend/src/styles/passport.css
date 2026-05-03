@@ -159,6 +159,10 @@
 }
 
 .passport-card-rating {
+  align-items: center;
+  color: var(--color-accent-walnut);
+  display: flex;
+  gap: 0.25rem;
   margin: 10px 0;
   font-size: 0.95rem;
 }

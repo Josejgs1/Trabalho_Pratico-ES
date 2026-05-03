@@ -1,0 +1,86 @@
+.landing-page {
+  background: var(--color-text-obsidian);
+  color: var(--color-text-obsidian);
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.landing-nav {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  left: 0;
+  padding: 1.25rem clamp(1rem, 5vw, 4rem);
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 3;
+}
+
+.landing-brand,
+.landing-links,
+.landing-actions {
+  align-items: center;
+  display: flex;
+}
+
+.landing-brand {
+  color: var(--color-surface-white);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.landing-brand-icon {
+  height: 28px;
+  width: 28px;
+}
+
+.landing-brand-icon path {
+  fill: currentColor;
+}
+
+.landing-links {
+  gap: 0.75rem;
+}
+
+.landing-links a,
+.landing-primary,
+.landing-secondary {
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.landing-links a {
+  color: var(--color-surface-white);
+  padding: 0.65rem 0.85rem;
+}
+
+.landing-nav-cta,
+.landing-primary {
+  background: var(--color-primary-sage);
+  color: var(--color-surface-white);
+}
+
+.landing-hero {
+  align-items: center;
+  display: flex;
+  height: 100dvh;
+  overflow: hidden;
+  padding: 7rem clamp(1rem, 5vw, 4rem) 5rem;
+  position: relative;
+}
+
+.landing-hero-shade {
+  background:
+    linear-gradient(90deg, rgba(26, 27, 26, 0.9), rgba(26, 27, 26, 0.16)),
+    radial-gradient(circle at 80% 20%, rgba(163, 189, 177, 0.2), transparent);
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}

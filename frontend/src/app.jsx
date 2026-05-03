@@ -1,20 +1,40 @@
+import { ProtectedPage } from "./components/auth/protectedPage.jsx";
+import LandingPage from "./pages/landingPage.jsx";
 import MapPage from "./pages/mapPage.jsx";
 import RegisterPage from "./pages/registerPage.jsx";
 import LoginPage from "./pages/loginPage.jsx";
-import PassportPage from "./pages/passportPage.jsx";
+import PassportPage from "./pages/passportPage.tsx";
 
 export default function App() {
-  if (window.location.pathname === "/login") {
+  const path = window.location.pathname;
+
+  if (path === "/") {
+    return <LandingPage />;
+  }
+
+  if (path === "/login") {
     return <LoginPage />;
   }
 
-  if (window.location.pathname === "/register") {
+  if (path === "/register") {
     return <RegisterPage />;
   }
 
-  if (window.location.pathname === "/passport") {
-    return <PassportPage />;
+  if (path === "/passport") {
+    return (
+      <ProtectedPage>
+        <PassportPage />
+      </ProtectedPage>
+    );
   }
 
-  return <MapPage />;
+  if (path === "/map") {
+    return (
+      <ProtectedPage>
+        <MapPage />
+      </ProtectedPage>
+    );
+  }
+
+  return <LandingPage />;
 }

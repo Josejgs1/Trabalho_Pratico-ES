@@ -1,9 +1,35 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MapPin, Phone, Globe, Copy, ArrowSquareOut, Heart, Star, Stamp } from "@phosphor-icons/react";
-import { fetchVenueById } from "../../services/venueService.js";
+import { fetchVenueById, fetchVenueReviews } from "../../services/venueService.js";
 import { addToWishlist, removeFromWishlist, checkWishlistStatus } from "../../services/wishlistService.js";
 import { CreateRecordModal } from "../passport/createRecordModal";
+
+function formatRating(value) {
+  if (value == null) return "-";
+
+  return Number(value).toLocaleString("pt-BR", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+}
+
+function formatReviewCount(count) {
+  return count === 1 ? "1 avaliação" : `${count} avaliações`;
+}
+
+function formatReviewDate(value) {
+  if (!value) return null;
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
 
 function InfoRow({ icon, text, href, onCopy }) {
   const handleRowClick = (e) => {
@@ -41,7 +67,20 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
   const [toast, setToast] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [reviewSummary, setReviewSummary] = useState(null);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewsError, setReviewsError] = useState("");
   const toastTimer = useRef(null);
+
+  const loadReviewSummary = useCallback((nextVenueId) => {
+    setReviewsLoading(true);
+    setReviewsError("");
+
+    return fetchVenueReviews(nextVenueId)
+      .then(setReviewSummary)
+      .catch((err) => setReviewsError(err.message))
+      .finally(() => setReviewsLoading(false));
+  }, []);
 
   const showToast = (text) => {
     navigator.clipboard.writeText(text);
@@ -56,18 +95,24 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
     setError("");
     setTab("about");
     setWishlisted(false);
+    setReviewSummary(null);
     fetchVenueById(venueId)
       .then(setVenue)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+    loadReviewSummary(venueId);
     checkWishlistStatus(venueId)
       .then((res) => setWishlisted(res.wishlisted))
       .catch(() => { });
-  }, [venueId]);
+  }, [loadReviewSummary, venueId]);
 
   if (loading) return <p className="drawer-status">Carregando…</p>;
   if (error) return <p className="drawer-status drawer-error">{error}</p>;
   if (!venue) return null;
+
+  const averageRating = reviewSummary?.average_rating ?? null;
+  const reviewCount = reviewSummary?.review_count ?? 0;
+  const roundedAverage = averageRating == null ? null : Math.round(averageRating);
 
   return (
     <div className="venue-detail">
@@ -115,13 +160,22 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
       <div className="venue-detail-body">
         <div className="venue-detail-actions">
           <div className="venue-rating">
-            <span className="venue-rating-score">4,8</span>
+            <span className="venue-rating-score">
+              {reviewsLoading && averageRating == null ? "..." : formatRating(averageRating)}
+            </span>
             <span className="venue-rating-stars">
               {[1, 2, 3, 4, 5].map(i => (
-                <Star key={i} size={18} weight="fill" className="venue-rating-star" />
+                <Star
+                  key={i}
+                  size={18}
+                  weight={roundedAverage != null && i <= roundedAverage ? "fill" : "regular"}
+                  className="venue-rating-star"
+                />
               ))}
             </span>
-            <span className="venue-rating-count">(2.158)</span>
+            <span className="venue-rating-count">
+              {reviewsLoading ? "(...)" : `(${formatReviewCount(reviewCount)})`}
+            </span>
           </div>
           <button
             className="venue-passport-btn"
@@ -173,14 +227,79 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
 
         {tab === "reviews" && (
           <div className="venue-detail-section venue-detail-section--first">
-            <p className="venue-detail-empty">Nenhuma avaliação ainda.</p>
+            {reviewsLoading && (
+              <p className="venue-detail-empty">Carregando avaliações...</p>
+            )}
+
+            {reviewsError && !reviewsLoading && (
+              <p className="drawer-status drawer-error">{reviewsError}</p>
+            )}
+
+            {!reviewsLoading && !reviewsError && reviewCount === 0 && (
+              <p className="venue-detail-empty">Nenhuma avaliação ainda.</p>
+            )}
+
+            {!reviewsLoading && !reviewsError && reviewCount > 0 && (
+              <>
+                <div className="venue-reviews-summary">
+                  <span className="venue-reviews-summary-score">
+                    {formatRating(averageRating)}
+                  </span>
+                  <span className="venue-reviews-summary-copy">
+                    Média de {formatReviewCount(reviewCount)}
+                  </span>
+                </div>
+
+                <div className="venue-review-list">
+                  {reviewSummary.reviews.map((review) => {
+                    const reviewDate = formatReviewDate(
+                      review.visit_date ?? review.created_at,
+                    );
+
+                    return (
+                      <article className="venue-review-item" key={review.id}>
+                        <div className="venue-review-header">
+                          <div>
+                            <h3 className="venue-review-author">
+                              {review.user_name}
+                            </h3>
+                            {reviewDate && (
+                              <p className="venue-review-date">{reviewDate}</p>
+                            )}
+                          </div>
+                          <div
+                            className="venue-review-stars"
+                            aria-label={`${review.rating} de 5`}
+                          >
+                            {[1, 2, 3, 4, 5].map((i) => (
+                              <Star
+                                key={i}
+                                size={14}
+                                weight={i <= review.rating ? "fill" : "regular"}
+                                className="venue-review-star"
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="venue-review-comment">
+                          {review.comment || "Sem comentário."}
+                        </p>
+                      </article>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
       <CreateRecordModal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
-        onSuccess={() => setIsCreateOpen(false)}
+        onSuccess={() => {
+          setIsCreateOpen(false);
+          loadReviewSummary(venueId);
+        }}
         initialVenueId={venueId}
       />
     </div>

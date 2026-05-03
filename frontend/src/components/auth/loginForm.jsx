@@ -36,7 +36,7 @@ export function LoginForm({ error, isSubmitting, onSubmit, success }) {
         />
       </label>
       <label className="auth-field">
-        <span>Password</span>
+        <span>Senha</span>
         <input
           name="password"
           type="password"
@@ -48,7 +48,7 @@ export function LoginForm({ error, isSubmitting, onSubmit, success }) {
       {error && <p className="auth-message auth-message-error">{error}</p>}
       {success && <p className="auth-message auth-message-success">{success}</p>}
       <button className="auth-submit" type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Signing in..." : "Sign In"}
+        {isSubmitting ? "Entrando..." : "Entrar"}
       </button>
     </form>
   );
