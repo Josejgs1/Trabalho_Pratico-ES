@@ -89,6 +89,99 @@
   margin-top: 0.5rem;
 }
 
+/* RECOMMENDATIONS */
+
+.recommendation-panel {
+  background: var(--color-surface-white);
+  border: 1px solid var(--color-border-birch);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(107, 83, 62, 0.08);
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+}
+
+.recommendation-panel--muted {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.recommendation-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.recommendation-kicker {
+  color: var(--color-primary-sage);
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.recommendation-title {
+  color: var(--color-text-obsidian);
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.recommendation-badge {
+  background: var(--color-bg-gallery);
+  border: 1px solid var(--color-border-birch);
+  border-radius: 999px;
+  color: var(--color-text-charcoal);
+  flex: 0 0 auto;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+}
+
+.recommendation-badge--ai {
+  background: rgba(91, 121, 94, 0.12);
+  border-color: rgba(91, 121, 94, 0.22);
+  color: var(--color-primary-sage);
+}
+
+.recommendation-note,
+.recommendation-status,
+.recommendation-fallback {
+  color: var(--color-text-charcoal);
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.recommendation-fallback {
+  margin-top: 0.5rem;
+}
+
+.recommendation-carousel {
+  margin-top: 1rem;
+  position: relative;
+}
+
+.recommendation-list {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.recommendation-list::-webkit-scrollbar {
+  display: none;
+}
 /* STATES */
 
 .passport-message {
