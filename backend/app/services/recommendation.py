@@ -78,3 +78,78 @@ def _load_wishlist_venues(db: Session, user_id: uuid.UUID) -> list[VenueRead]:
     )
     return [_to_venue_read(row) for row in db.execute(stmt).all()]
 
+
+def _preferred_categories(
+    record_venues: list[VenueRead],
+    wishlist_venues: list[VenueRead],
+) -> list[str]:
+    counts = Counter(
+        venue.category
+        for venue in [*record_venues, *wishlist_venues]
+        if venue.category
+    )
+    return [category for category, _count in counts.most_common()]
+
+
+def _exclude_blocked(stmt, blocked_ids: set[uuid.UUID]):
+    if not blocked_ids:
+        return stmt
+    return stmt.where(Venue.id.notin_(blocked_ids))
+
+
+def _load_candidate_venues(
+    db: Session,
+    blocked_ids: set[uuid.UUID],
+    categories: list[str],
+    limit: int = MAX_AI_CANDIDATES,
+) -> list[VenueRead]:
+    stmt = _exclude_blocked(_venue_select(), blocked_ids)
+    if categories:
+        stmt = stmt.where(Venue.category.in_(categories))
+    stmt = stmt.order_by(Venue.name).limit(limit)
+    return [_to_venue_read(row) for row in db.execute(stmt).all()]
+
+
+def _load_popular_venues(
+    db: Session,
+    blocked_ids: set[uuid.UUID],
+    limit: int = RECOMMENDATION_SIZE,
+) -> list[VenueRead]:
+    popularity = (
+        select(
+            Record.venue_id.label("venue_id"),
+            func.count(Record.id).label("visit_count"),
+        )
+        .group_by(Record.venue_id)
+        .subquery()
+    )
+    stmt = (
+        _venue_select()
+        .join(popularity, popularity.c.venue_id == Venue.id)
+        .order_by(desc(popularity.c.visit_count), Venue.name)
+        .limit(limit)
+    )
+    stmt = _exclude_blocked(stmt, blocked_ids)
+    return [_to_venue_read(row) for row in db.execute(stmt).all()]
+
+
+def _load_available_venues(
+    db: Session,
+    blocked_ids: set[uuid.UUID],
+    limit: int,
+) -> list[VenueRead]:
+    stmt = _exclude_blocked(_venue_select(), blocked_ids)
+    stmt = stmt.order_by(Venue.name).limit(limit)
+    return [_to_venue_read(row) for row in db.execute(stmt).all()]
+
+
+def _candidate_payload(venues: list[VenueRead]) -> list[dict[str, str | None]]:
+    return [
+        {
+            "name": venue.name,
+            "category": venue.category,
+            "description": venue.description,
+        }
+        for venue in venues
+    ]
+
