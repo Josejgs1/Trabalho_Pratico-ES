@@ -153,3 +153,88 @@ def _candidate_payload(venues: list[VenueRead]) -> list[dict[str, str | None]]:
         for venue in venues
     ]
 
+
+def _context_payload(
+    record_venues: list[VenueRead],
+    wishlist_venues: list[VenueRead],
+    categories: list[str],
+) -> dict[str, list[dict[str, str]] | list[str]]:
+    return {
+        "visited_venues": [
+            {"name": venue.name, "category": venue.category}
+            for venue in record_venues
+        ],
+        "wishlist": [
+            {"name": venue.name, "category": venue.category}
+            for venue in wishlist_venues
+        ],
+        "preferences": categories,
+    }
+
+
+def _build_prompt(
+    record_venues: list[VenueRead],
+    wishlist_venues: list[VenueRead],
+    categories: list[str],
+    candidates: list[VenueRead],
+) -> str:
+    return f"""
+Analyze the following dataset and construct a curated itinerary.
+
+Data Source:
+- Origin: User History/Wishlist
+
+User Context:
+{json.dumps(_context_payload(record_venues, wishlist_venues, categories), ensure_ascii=False)}
+
+Available Candidate Pool:
+{json.dumps(_candidate_payload(candidates), ensure_ascii=False)}
+
+Objective:
+Select exactly 3 venues from the Available Candidate Pool that form a coherent
+and engaging thematic itinerary.
+
+Strict Constraints:
+1. Do NOT include venues already visited by the user.
+2. Do NOT include venues already in the user's wishlist.
+3. Venue names must match EXACTLY as provided, including case.
+4. Return ONLY valid raw JSON.
+5. All user-facing text must be in Brazilian Portuguese.
+6. Use this exact schema:
+{{
+  "itinerary_title": "Título criativo em pt-BR para o roteiro",
+  "itinerary_names": ["Exact Venue Name 1", "Exact Venue Name 2", "Exact Venue Name 3"],
+  "curator_note": "Explicação coesa em 1-2 frases em pt-BR",
+  "interpretability_logic": {{
+    "venue_1_choice": "Justificativa do primeiro local",
+    "venue_2_choice": "Justificativa do segundo local",
+    "venue_3_choice": "Justificativa do terceiro local"
+  }}
+}}
+""".strip()
+
+
+def _call_gemini(prompt: str) -> RecommendationAiOutput:
+    api_key = settings.GEMINI_API_KEY.strip()
+    if not api_key or api_key == "your_gemini_api_key":
+        raise RecommendationAiError("Gemini API key is not configured.")
+
+    model = quote(settings.GEMINI_MODEL, safe="")
+    url = (
+        "https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{model}:generateContent?key={quote(api_key, safe='')}"
+    )
+    payload = {
+        "system_instruction": {"parts": [{"text": SYSTEM_INSTRUCTION}]},
+        "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.4,
+            "response_mime_type": "application/json",
+        },
+    }
+    request = Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
