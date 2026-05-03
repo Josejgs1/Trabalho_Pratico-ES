@@ -92,3 +92,100 @@ export function RecommendationPanel({ error, loading, recommendation }) {
       </section>
     );
   }
+
+  const usedFallback = recommendation.source === "popularity_fallback";
+  const isAi = recommendation.source === "ai";
+
+  return (
+    <section className="recommendation-panel">
+      <div className="recommendation-heading">
+        <div>
+          <span className="recommendation-kicker">Roteiro recomendado</span>
+          <h2 className="recommendation-title">
+            {recommendation.itinerary_title}
+          </h2>
+        </div>
+        {(usedFallback || isAi) && (
+          <span className={`recommendation-badge${isAi ? " recommendation-badge--ai" : ""}`}>
+            {isAi ? "Gerado por IA" : "Popularidade"}
+          </span>
+        )}
+      </div>
+
+      <p className="recommendation-note">{recommendation.curator_note}</p>
+
+      {usedFallback && recommendation.fallback_reason && (
+        <p className="recommendation-fallback">
+          {recommendation.fallback_reason}
+        </p>
+      )}
+
+      <div className="recommendation-carousel">
+        {canScrollLeft && (
+          <button
+            aria-label="Ver recomendação anterior"
+            className="carousel-arrow carousel-arrow--left recommendation-arrow"
+            onClick={() => scroll(-1)}
+            type="button"
+          >
+            <CaretLeft size={14} weight="bold" />
+          </button>
+        )}
+
+        <div className="recommendation-list" ref={listRef}>
+          {recommendation.venues.map((venue) => (
+            <div
+              className="recommendation-card"
+              key={venue.id}
+              onClick={() => openVenue(venue.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  openVenue(venue.id);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+            >
+              <button
+                aria-label={wishlistedById[venue.id] ? "Remover da wishlist" : "Adicionar à wishlist"}
+                className={`venue-detail-wishlist${wishlistedById[venue.id] ? " active" : ""}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleWishlist(venue.id);
+                }}
+                type="button"
+              >
+                <Heart size={20} weight={wishlistedById[venue.id] ? "fill" : "regular"} />
+              </button>
+              <img
+                alt={venue.name}
+                className="recommendation-image"
+                src={venue.image_url || "https://via.placeholder.com/400x220"}
+              />
+              <span className="recommendation-card-body">
+                <span className="recommendation-category">{venue.category}</span>
+                <span className="recommendation-name">{venue.name}</span>
+                <span className="recommendation-address">{venue.address}</span>
+                <span className="recommendation-justification">
+                  {venue.justification}
+                </span>
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {canScrollRight && (
+          <button
+            aria-label="Ver próxima recomendação"
+            className="carousel-arrow carousel-arrow--right recommendation-arrow"
+            onClick={() => scroll(1)}
+            type="button"
+          >
+            <CaretRight size={14} weight="bold" />
+          </button>
+        )}
+      </div>
+    </section>
+  );
+}
