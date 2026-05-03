@@ -64,6 +64,8 @@ export default function MapPage() {
       category: activeCategory,
     }),
     [activeCategory, debouncedSearch],
+  );
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const venueId = params.get("venue");
@@ -257,13 +259,6 @@ export default function MapPage() {
     venueParamsKey,
     venues,
   ]);
-
-  const categorySource = allVenues.length > 0 ? allVenues : venues;
-
-  const categories = useMemo(
-    () => [...new Set(categorySource.map((v) => v.category))].sort(),
-    [categorySource],
-  );
 
   const searchResults = useMemo(() => {
     if (search.trim().length < 2) return [];
