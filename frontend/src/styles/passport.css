@@ -182,6 +182,99 @@
 .recommendation-list::-webkit-scrollbar {
   display: none;
 }
+
+.recommendation-card {
+  align-items: stretch;
+  background: var(--color-bg-gallery);
+  border: 1px solid var(--color-border-birch);
+  border-radius: 8px;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  flex: 0 0 100%;
+  grid-template-columns: minmax(220px, 0.42fr) minmax(0, 0.58fr);
+  min-height: 100px;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  text-align: left;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.recommendation-card:hover {
+  box-shadow: 0 8px 20px rgba(107, 83, 62, 0.11);
+  transform: translateY(-2px);
+}
+
+.recommendation-image {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.recommendation-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 1.25rem;
+}
+
+.recommendation-category {
+  color: var(--color-primary-sage);
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.recommendation-name {
+  color: var(--color-text-obsidian);
+  font-family: var(--font-ui);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.recommendation-address {
+  color: var(--color-text-charcoal);
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin-top: 0.35rem;
+}
+
+.recommendation-justification {
+  color: var(--color-text-charcoal);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-top: 0.75rem;
+}
+
+.recommendation-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.recommendation-arrow.carousel-arrow--left {
+  left: 0.5rem;
+}
+
+.recommendation-arrow.carousel-arrow--right {
+  right: 0.5rem;
+}
+
+.recommendation-card .venue-detail-wishlist {
+  z-index: 1;
+}
 /* STATES */
 
 .passport-message {
