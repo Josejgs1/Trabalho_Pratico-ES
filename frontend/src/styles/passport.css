@@ -275,6 +275,22 @@
 .recommendation-card .venue-detail-wishlist {
   z-index: 1;
 }
+
+@media (max-width: 800px) {
+  .recommendation-heading {
+    flex-direction: column;
+  }
+
+  .recommendation-card {
+    grid-template-columns: 1fr;
+  }
+
+  .recommendation-image {
+    aspect-ratio: 16 / 9;
+    height: auto;
+  }
+}
+
 /* STATES */
 
 .passport-message {
