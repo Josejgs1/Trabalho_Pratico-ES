@@ -238,3 +238,75 @@ def _call_gemini(prompt: str) -> RecommendationAiOutput:
         headers={"Content-Type": "application/json"},
         method="POST",
     )
+
+    try:
+        with urlopen(request, timeout=GEMINI_TIMEOUT_SECONDS) as response:
+            data = json.loads(response.read().decode("utf-8"))
+    except (HTTPError, URLError, SocketTimeout, TimeoutError, json.JSONDecodeError) as exc:
+        raise RecommendationAiError("Gemini request failed.") from exc
+
+    try:
+        raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
+        return RecommendationAiOutput.model_validate_json(raw_text)
+    except (KeyError, IndexError, TypeError, ValidationError) as exc:
+        raise RecommendationAiError("Gemini returned invalid JSON.") from exc
+
+
+def _to_recommendation_venue(
+    venue: VenueRead,
+    justification: str,
+) -> RecommendationVenueRead:
+    return RecommendationVenueRead(
+        id=venue.id,
+        name=venue.name,
+        description=venue.description,
+        category=venue.category,
+        address=venue.address,
+        latitude=venue.latitude,
+        longitude=venue.longitude,
+        image_url=venue.image_url,
+        justification=justification,
+    )
+
+
+def _build_ai_recommendation(
+    ai_output: RecommendationAiOutput,
+    candidates: list[VenueRead],
+) -> RecommendationRead:
+    candidates_by_name = {venue.name: venue for venue in candidates}
+    recommended: list[RecommendationVenueRead] = []
+    seen_names: set[str] = set()
+
+    for index, name in enumerate(ai_output.itinerary_names, start=1):
+        venue = candidates_by_name.get(name)
+        if venue is None or name in seen_names:
+            continue
+        seen_names.add(name)
+        justification = ai_output.interpretability_logic.get(
+            f"venue_{index}_choice",
+            "Selecionado por coerência com o roteiro recomendado.",
+        )
+        recommended.append(_to_recommendation_venue(venue, justification))
+
+    if len(recommended) != RECOMMENDATION_SIZE:
+        raise RecommendationAiError("Gemini selected venues outside the candidate pool.")
+
+    return RecommendationRead(
+        itinerary_title=ai_output.itinerary_title,
+        curator_note=ai_output.curator_note,
+        source="ai",
+        venues=recommended,
+    )
+
+
+def _no_candidates_response() -> RecommendationRead:
+    return RecommendationRead(
+        itinerary_title="Ainda não há recomendações disponíveis",
+        curator_note=(
+            "Não encontramos locais suficientes fora do seu histórico e da sua "
+            "lista de desejos para montar um roteiro agora."
+        ),
+        source="no_candidates",
+        venues=[],
+    )
+
