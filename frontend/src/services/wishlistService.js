@@ -14,3 +14,7 @@ export function removeFromWishlist(venueId) {
 export function checkWishlistStatus(venueId) {
   return apiRequest(`/wishlists/${venueId}/status`);
 }
+
+export function listWishlist() {
+  return apiRequest("/wishlists/");
+}

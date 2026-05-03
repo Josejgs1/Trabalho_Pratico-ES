@@ -4,8 +4,11 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { Stamp, User } from "@phosphor-icons/react";
 import MapOverlay from "../components/map/mapOverlay.jsx";
+import UserDrawerContent from "../components/map/userDrawerContent.jsx";
 import VenueDrawerContent from "../components/map/venueDrawerContent.jsx";
 import { KultiLogo } from "../components/brand/kultiLogo.jsx";
+import { getCurrentUser } from "../services/authService.js";
+import { clearAccessToken } from "../services/tokenStorage.js";
 import { fetchVenues } from "../services/venueService.js";
 import "../styles/mapPage.css";
 
@@ -15,8 +18,8 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const INITIAL_VIEW = { longitude: -43.9378, latitude: -19.9191, zoom: 12 };
 
 const MAX_BOUNDS = [
-  [-44.23, -20.14],
-  [-43.90, -19.84],
+  [-44.30, -20.14],
+  [-43.72, -19.84],
 ];
 
 // Drawer width (33.33vw) + left margin (1rem) + gap
@@ -48,6 +51,10 @@ export default function MapPage() {
   const [loadingVenues, setLoadingVenues] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedVenueId, setSelectedVenueId] = useState(null);
+  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileError, setProfileError] = useState("");
 
   const [initialVenueId, setInitialVenueId] = useState(null);
 
@@ -57,6 +64,46 @@ export default function MapPage() {
       category: activeCategory,
     }),
     [activeCategory, debouncedSearch],
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const venueId = params.get("venue");
+
+    if (venueId) {
+      setInitialVenueId(venueId);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchVenues()
+      .then(setVenues)
+      .catch((err) => console.error("Failed to load venues:", err));
+  }, []);
+
+  const loadCurrentUser = useCallback(() => {
+    setProfileLoading(true);
+    setProfileError("");
+
+    getCurrentUser()
+      .then(setCurrentUser)
+      .catch((err) => setProfileError(err.message))
+      .finally(() => setProfileLoading(false));
+  }, []);
+
+  useEffect(() => {
+    if (!initialVenueId || venues.length === 0) return;
+
+    const venue = venues.find((v) => v.id === initialVenueId);
+
+    if (venue) {
+      setTimeout(() => {
+        openDrawer(venue);
+      }, 200);
+    }
+  }, [initialVenueId, venues]);
+
+  const categories = useMemo(
+    () => [...new Set(venues.map((v) => v.category))].sort(),
+    [venues],
   );
 
   const venueParamsKey = useMemo(
@@ -239,6 +286,28 @@ export default function MapPage() {
     openDrawer(venue, { focus: true });
   }, [openDrawer]);
 
+  const handleProfileClick = useCallback(() => {
+    setProfileDrawerOpen((isOpen) => !isOpen);
+
+    if (!currentUser && !profileLoading) {
+      loadCurrentUser();
+    }
+  }, [currentUser, loadCurrentUser, profileLoading]);
+
+  const closeProfileDrawer = useCallback(() => {
+    setProfileDrawerOpen(false);
+  }, []);
+
+  const handleMapClick = useCallback(() => {
+    closeDrawer();
+    closeProfileDrawer();
+  }, [closeDrawer, closeProfileDrawer]);
+
+  const handleSignOut = useCallback(() => {
+    clearAccessToken();
+    window.location.href = "/";
+  }, []);
+
   return (
     <div className="map-wrapper">
       <div className="map-logo">
@@ -255,10 +324,27 @@ export default function MapPage() {
           Meu Passaporte
         </button>
 
-        <button className="profile-button">
+        <button
+          className={`profile-button${
+            profileDrawerOpen ? " profile-button--active" : ""
+          }`}
+          aria-label="Abrir perfil"
+          aria-expanded={profileDrawerOpen}
+          onClick={handleProfileClick}
+          title="Perfil"
+        >
           <User size={18} weight="regular" />
         </button>
       </div>
+
+      <UserDrawerContent
+        open={profileDrawerOpen}
+        user={currentUser}
+        loading={profileLoading}
+        error={profileError}
+        onClose={closeProfileDrawer}
+        onSignOut={handleSignOut}
+      />
 
       <MapOverlay
         search={search}
@@ -287,7 +373,7 @@ export default function MapPage() {
         mapStyle="mapbox://styles/kauantp/cmof2thkt003u01qpfwrb1v0i"
         maxBounds={MAX_BOUNDS}
         style={{ width: "100%", height: "100vh" }}
-        onClick={closeDrawer}
+        onClick={handleMapClick}
       >
         <NavigationControl position="bottom-right" showCompass={false} />
         <NavigationControl

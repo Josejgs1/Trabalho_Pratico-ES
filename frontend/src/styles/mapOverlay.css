@@ -315,6 +315,7 @@
 .venue-detail-actions {
   align-items: center;
   display: flex;
+  gap: 0.75rem;
   justify-content: space-between;
   margin-bottom: 0.75rem;
 }
@@ -322,8 +323,9 @@
 .venue-rating {
   align-items: center;
   display: flex;
+  flex: 1;
   gap: 0.375rem;
-  width: 50%;
+  min-width: 0;
 }
 
 .venue-rating-score {
@@ -340,13 +342,16 @@
 }
 
 .venue-rating-star {
-  color: var(--color-text-obsidian);
+  color: #f5b50a;
 }
 
 .venue-rating-count {
   color: var(--color-text-charcoal);
   font-family: var(--font-ui);
   font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .venue-passport-btn {
@@ -363,8 +368,8 @@
   gap: 0.375rem;
   justify-content: center;
   padding: 0.4rem 0.875rem;
+  flex: 0 0 auto;
   transition: background 0.15s ease;
-  width: 50%;
 }
 
 .venue-passport-btn:hover {
@@ -437,6 +442,87 @@
   font-family: var(--font-ui);
   font-size: 0.875rem;
   opacity: 0.6;
+}
+
+.venue-reviews-summary {
+  align-items: baseline;
+  border-bottom: 1px solid var(--color-border-birch);
+  display: flex;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+}
+
+.venue-reviews-summary-score {
+  color: var(--color-text-obsidian);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.venue-reviews-summary-copy {
+  color: var(--color-text-charcoal);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+}
+
+.venue-review-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.venue-review-item {
+  border-bottom: 1px solid var(--color-border-birch);
+  padding: 0.875rem 0;
+}
+
+.venue-review-item:last-child {
+  border-bottom: none;
+}
+
+.venue-review-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.venue-review-author {
+  color: var(--color-text-obsidian);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.venue-review-date {
+  color: var(--color-text-charcoal);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  margin: 0.125rem 0 0;
+}
+
+.venue-review-stars {
+  align-items: center;
+  color: var(--color-accent-walnut);
+  display: flex;
+  flex: 0 0 auto;
+  gap: 1px;
+  margin-top: 0.125rem;
+}
+
+.venue-review-star {
+  color: var(--color-accent-walnut);
+}
+
+.venue-review-comment {
+  color: var(--color-text-charcoal);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  margin: 0.5rem 0 0;
+  overflow-wrap: anywhere;
 }
 
 /* Sections */
@@ -513,6 +599,10 @@
 .venue-info-row:hover {
   background: var(--color-bg-gallery);
   color: var(--color-text-obsidian);
+}
+
+.venue-info-row--link:hover .venue-info-text {
+  text-decoration: underline;
 }
 
 .venue-info-icon {

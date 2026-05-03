@@ -157,7 +157,7 @@ export function CreateRecordModal({
                                 />
                                 <div>
                                     <p className="venue-name">{selectedVenue.name}</p>
-                                    <span className="venue-selected">Selected</span>
+                                    <span className="venue-selected">Selecionado</span>
                                 </div>
                             </div>
                         )}

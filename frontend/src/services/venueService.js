@@ -20,3 +20,7 @@ export function fetchVenues(params = {}) {
 export function fetchVenueById(id) {
   return apiRequest(`/venues/${id}`);
 }
+
+export function fetchVenueReviews(id) {
+  return apiRequest(`/venues/${id}/reviews`);
+}

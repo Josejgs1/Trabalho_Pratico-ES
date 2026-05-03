@@ -30,7 +30,7 @@ class VenueUpdate(BaseModel):
 
 class VenueRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: uuid.UUID
     name: str
     description: str | None
@@ -43,3 +43,19 @@ class VenueRead(BaseModel):
     image_url: str | None
     created_at: datetime
     updated_at: datetime
+
+
+class VenueReviewRead(BaseModel):
+    id: uuid.UUID
+    user_name: str
+    rating: int
+    comment: str | None
+    visit_date: datetime | None
+    created_at: datetime
+
+
+class VenueReviewSummaryRead(BaseModel):
+    venue_id: uuid.UUID
+    average_rating: float | None
+    review_count: int
+    reviews: list[VenueReviewRead]

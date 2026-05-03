@@ -2,7 +2,8 @@ import { useState } from "react";
 
 import { AuthShell } from "../components/auth/authShell.jsx";
 import { RegisterForm } from "../components/auth/registerForm.jsx";
-import { registerUser } from "../services/authService.js";
+import { loginUser, registerUser } from "../services/authService.js";
+import { saveAccessToken } from "../services/tokenStorage.js";
 
 export default function RegisterPage() {
   const [error, setError] = useState("");
@@ -16,7 +17,13 @@ export default function RegisterPage() {
 
     try {
       await registerUser(user);
-      setSuccess("Account created successfully. You can sign in next.");
+      const auth = await loginUser({
+        email: user.email,
+        password: user.password,
+      });
+      saveAccessToken(auth.access_token);
+      setSuccess("Conta criada com sucesso. Abrindo seu mapa.");
+      window.location.replace("/map");
     } catch (requestError) {
       setError(requestError.message);
     } finally {
@@ -26,14 +33,14 @@ export default function RegisterPage() {
 
   return (
     <AuthShell
-      ariaLabel="Create account"
-      title="Create your account"
-      subtitle="Begin your curated journey through museums and galleries"
+      ariaLabel="Criar conta"
+      title="Crie sua conta"
+      subtitle="Comece sua jornada por museus e galerias"
       footer={
         <>
-          Already have an account?{" "}
+          Já tem uma conta?{" "}
           <a className="auth-link" href="/login">
-            Sign in
+            Entrar
           </a>
         </>
       }

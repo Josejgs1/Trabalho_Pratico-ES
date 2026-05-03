@@ -122,6 +122,8 @@
   overflow: hidden;
   border: 1px solid var(--color-border-birch);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .passport-card:hover {
@@ -137,12 +139,18 @@
 
 .passport-card-content {
   padding: 15px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .passport-card-title {
   font-size: 1.1rem;
   margin-bottom: 5px;
   color: var(--color-text-obsidian);
+  min-height: 2.6em;
+  display: flex;
+  align-items: center;
 }
 
 .passport-card-status {
@@ -151,6 +159,10 @@
 }
 
 .passport-card-rating {
+  align-items: center;
+  color: var(--color-accent-walnut);
+  display: flex;
+  gap: 0.25rem;
   margin: 10px 0;
   font-size: 0.95rem;
 }
@@ -196,4 +208,66 @@
 
 .edit-button:hover {
   transform: scale(1.1);
+}
+
+/* TABS */
+
+.passport-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-border-birch);
+}
+
+.passport-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  color: var(--color-text-charcoal);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.passport-tab:hover {
+  color: var(--color-text-obsidian);
+}
+
+.passport-tab.active {
+  color: var(--color-primary-sage);
+  border-bottom-color: var(--color-primary-sage);
+  font-weight: 600;
+}
+
+.passport-card .venue-detail-wishlist {
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}
+
+.passport-card-tag {
+  background: var(--color-primary-sage);
+  border-radius: 999px;
+  color: var(--color-surface-white);
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.6rem;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.passport-card-address {
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  font-style: normal;
+  line-height: 1.5;
+  color: var(--color-text-charcoal);
+  margin-top: 0.5rem;
+  word-break: break-word;
 }
