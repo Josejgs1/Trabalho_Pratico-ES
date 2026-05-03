@@ -310,3 +310,71 @@ def _no_candidates_response() -> RecommendationRead:
         venues=[],
     )
 
+
+def _build_popularity_fallback(
+    db: Session,
+    blocked_ids: set[uuid.UUID],
+    reason: str,
+) -> RecommendationRead:
+    venues = _load_popular_venues(db, blocked_ids, RECOMMENDATION_SIZE)
+    if len(venues) < RECOMMENDATION_SIZE:
+        existing_ids = {venue.id for venue in venues}
+        fill_venues = _load_available_venues(
+            db,
+            blocked_ids | existing_ids,
+            RECOMMENDATION_SIZE - len(venues),
+        )
+        venues.extend(fill_venues)
+
+    if not venues:
+        return _no_candidates_response()
+
+    recommendations = [
+        _to_recommendation_venue(
+            venue,
+            "Este local aparece como uma opção relevante entre os espaços disponíveis.",
+        )
+        for venue in venues[:RECOMMENDATION_SIZE]
+    ]
+    return RecommendationRead(
+        itinerary_title="Roteiro em destaque",
+        curator_note=(
+            "Selecionamos locais com bom sinal de interesse da comunidade para "
+            "manter seu passaporte em movimento."
+        ),
+        source="popularity_fallback",
+        fallback_reason=reason,
+        venues=recommendations,
+    )
+
+
+def get_recommendations(db: Session, user_id: uuid.UUID) -> RecommendationRead:
+    record_venues = _load_record_venues(db, user_id)
+    wishlist_venues = _load_wishlist_venues(db, user_id)
+    blocked_ids = {venue.id for venue in [*record_venues, *wishlist_venues]}
+    categories = _preferred_categories(record_venues, wishlist_venues)
+
+    if not record_venues and not wishlist_venues:
+        return _build_popularity_fallback(
+            db,
+            blocked_ids,
+            "Usamos popularidade porque seu passaporte ainda não tem histórico.",
+        )
+
+    candidates = _load_candidate_venues(db, blocked_ids, categories)
+    if len(candidates) < RECOMMENDATION_SIZE:
+        candidates = _load_candidate_venues(db, blocked_ids, [])
+
+    if not candidates:
+        return _no_candidates_response()
+
+    try:
+        prompt = _build_prompt(record_venues, wishlist_venues, categories, candidates)
+        ai_output = _call_gemini(prompt)
+        return _build_ai_recommendation(ai_output, candidates)
+    except RecommendationAiError:
+        return _build_popularity_fallback(
+            db,
+            blocked_ids,
+            "Usamos popularidade porque a curadoria por IA não respondeu agora.",
+        )
