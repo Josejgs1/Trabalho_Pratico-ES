@@ -6,6 +6,8 @@ ROOT_DIR = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
+    AUTH_SECRET_KEY: str = ""
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     PROJECT_NAME: str = "KULTI"
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "gemini-1.5-flash"
