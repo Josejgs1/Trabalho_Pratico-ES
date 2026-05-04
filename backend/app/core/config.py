@@ -6,17 +6,16 @@ ROOT_DIR = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
-    AUTH_SECRET_KEY: str = ""
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
+    AUTH_SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
     PROJECT_NAME: str = "KULTI"
-    GEMINI_API_KEY: str = ""
-    GEMINI_MODEL: str = "gemini-1.5-flash"
-    DATABASE_URL: str = "postgresql+psycopg://kulti:kulti@localhost:5432/kulti"
-    POSTGRES_USER: str = "kulti"
-    POSTGRES_PASSWORD: str = "kulti"
-    POSTGRES_DB: str = "kulti"
+    GEMINI_API_KEY: str
+    GEMINI_MODEL: str
+    DATABASE_URL: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str
 
     model_config = SettingsConfigDict(env_file=ROOT_DIR / ".env", extra="ignore")
-
 
 settings = Settings()
