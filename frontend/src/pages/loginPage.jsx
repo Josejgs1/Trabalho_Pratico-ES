@@ -3,6 +3,7 @@ import { useState } from "react";
 import { AuthShell } from "../components/auth/authShell.jsx";
 import { LoginForm } from "../components/auth/loginForm.jsx";
 import { loginUser } from "../services/authService.js";
+import { primeRecommendationCache } from "../services/recommendationService.js";
 import { saveAccessToken } from "../services/tokenStorage.js";
 
 function loginRedirectPath() {
@@ -29,6 +30,9 @@ export default function LoginPage() {
     try {
       const auth = await loginUser(credentials);
       saveAccessToken(auth.access_token);
+      await primeRecommendationCache().catch((err) => {
+        console.error("Failed to prime recommendations:", err);
+      });
       setSuccess(`Bem-vindo de volta, ${auth.user.name}.`);
       window.location.replace(loginRedirectPath());
     } catch (requestError) {

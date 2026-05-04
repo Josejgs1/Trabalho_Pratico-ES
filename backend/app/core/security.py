@@ -5,9 +5,14 @@ import json
 import os
 import secrets
 import time
+from app.core.config import settings
 
-SECRET_KEY = os.getenv("AUTH_SECRET_KEY", "change-me-in-production")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
+
+if not settings.AUTH_SECRET_KEY:
+  raise RuntimeError("AUTH_SECRET_KEY must be set in the environment.")
+    
+SECRET_KEY = settings.AUTH_SECRET_KEY
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 PASSWORD_HASH_ITERATIONS = 100_000
 
 def _urlsafe_b64encode(data: bytes) -> str:

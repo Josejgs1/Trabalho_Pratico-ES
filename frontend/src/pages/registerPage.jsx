@@ -3,6 +3,7 @@ import { useState } from "react";
 import { AuthShell } from "../components/auth/authShell.jsx";
 import { RegisterForm } from "../components/auth/registerForm.jsx";
 import { loginUser, registerUser } from "../services/authService.js";
+import { primeRecommendationCache } from "../services/recommendationService.js";
 import { saveAccessToken } from "../services/tokenStorage.js";
 
 export default function RegisterPage() {
@@ -22,6 +23,9 @@ export default function RegisterPage() {
         password: user.password,
       });
       saveAccessToken(auth.access_token);
+      await primeRecommendationCache().catch((err) => {
+        console.error("Failed to prime recommendations:", err);
+      });
       setSuccess("Conta criada com sucesso. Abrindo seu mapa.");
       window.location.replace("/map");
     } catch (requestError) {

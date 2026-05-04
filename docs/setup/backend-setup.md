@@ -7,6 +7,8 @@
 ## Prerequisites
 
 - [Python 3.12+](https://www.python.org/downloads/)
+- The backend reads configuration from the repository-root `.env` file.
+  Make sure `DATABASE_URL`, `AUTH_SECRET_KEY`, and `GEMINI_API_KEY` are set.
 
 ## Installation
 

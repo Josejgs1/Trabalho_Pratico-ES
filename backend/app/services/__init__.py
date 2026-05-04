@@ -1,3 +1,3 @@
-from app.services import auth, venue, record, wishlist
+from app.services import auth, recommendation, record, venue, wishlist
 
-__all__ = ["auth", "venue", "record", "wishlist"]
+__all__ = ["auth", "recommendation", "record", "venue", "wishlist"]

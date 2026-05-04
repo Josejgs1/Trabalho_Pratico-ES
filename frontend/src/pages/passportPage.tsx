@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { fetchRecords } from "../services/recordService.js";
+import { fetchRecommendations } from "../services/recommendationService.js";
 import { fetchVenues } from "../services/venueService.js";
 import { listWishlist } from "../services/wishlistService.js";
 
 import { PassportHeader } from "../components/passport/passportHeader";
+import { RecommendationPanel } from "../components/passport/recommendationPanel.jsx";
 import { RecordList } from "../components/passport/recordList";
 import { WishlistList } from "../components/passport/wishlistList";
 import { KultiLogo } from "../components/brand/kultiLogo.jsx";
@@ -18,6 +20,24 @@ export default function PassportPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tab, setTab] = useState("records");
+  const [recommendation, setRecommendation] = useState(null);
+  const [recommendationError, setRecommendationError] = useState("");
+  const [recommendationLoading, setRecommendationLoading] = useState(true);
+
+  async function reloadRecommendations({ forceRefresh = false } = {}) {
+    setRecommendationLoading(true);
+    setRecommendationError("");
+
+    try {
+      const data = await fetchRecommendations({ forceRefresh });
+      setRecommendation(data);
+    } catch (err) {
+      setRecommendation(null);
+      setRecommendationError("Não foi possível carregar seu roteiro agora.");
+    } finally {
+      setRecommendationLoading(false);
+    }
+  }
 
   async function reloadRecords() {
     const data = await fetchRecords();
@@ -49,6 +69,7 @@ export default function PassportPage() {
     }
 
     loadData();
+    reloadRecommendations();
   }, []);
 
   return (
@@ -87,6 +108,12 @@ export default function PassportPage() {
         </div>
 
         <PassportHeader />
+
+        <RecommendationPanel
+          error={recommendationError}
+          loading={recommendationLoading}
+          recommendation={recommendation}
+        />
 
         {loading && (
           <p className="passport-message">Loading your journey...</p>
