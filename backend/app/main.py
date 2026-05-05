@@ -29,3 +29,10 @@ app.include_router(wishlist_router)
 @app.get("/health", tags=["health"])
 def read_health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.post("/seed", tags=["admin"])
+def run_seed():
+    from seed import seed
+    seed()
+    return {"status": "seeded"}
