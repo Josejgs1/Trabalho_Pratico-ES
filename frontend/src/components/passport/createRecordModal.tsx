@@ -82,8 +82,14 @@ export function CreateRecordModal({
             try {
                 const data = await fetchVenues();
                 setVenues(data);
-            } catch {
-                setError("Falha ao carregar museus.");
+            } catch (err: any) {
+                const message =
+                    err?.response?.data?.detail || 
+                    err?.detail ||  
+                    err?.message || 
+                    "Erro ao criar avaliação.";
+
+                setError(message);
             }
         }
 
