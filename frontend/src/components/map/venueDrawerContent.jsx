@@ -5,6 +5,9 @@ import { fetchVenueById, fetchVenueReviews } from "../../services/venueService.j
 import { addToWishlist, removeFromWishlist, checkWishlistStatus } from "../../services/wishlistService.js";
 import { CreateRecordModal } from "../passport/createRecordModal";
 
+import { fetchRecords } from "../../services/recordService.js";
+import { EditRecordModal } from "../passport/editRecordModal";
+
 function formatRating(value) {
   if (value == null) return "-";
 
@@ -70,6 +73,8 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
   const [reviewSummary, setReviewSummary] = useState(null);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [reviewsError, setReviewsError] = useState("");
+  const [userRecord, setUserRecord] = useState(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const toastTimer = useRef(null);
 
   const loadReviewSummary = useCallback((nextVenueId) => {
@@ -96,6 +101,7 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
     setTab("about");
     setWishlisted(false);
     setReviewSummary(null);
+    setUserRecord(null);
     fetchVenueById(venueId)
       .then(setVenue)
       .catch((err) => setError(err.message))
@@ -104,6 +110,14 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
     checkWishlistStatus(venueId)
       .then((res) => setWishlisted(res.wishlisted))
       .catch(() => { });
+
+    fetchRecords()
+      .then((records) => {
+        const found = records.find(r => r.venue_id === venueId);
+        setUserRecord(found || null);
+      })
+      .catch(() => { });
+
   }, [loadReviewSummary, venueId]);
 
   if (loading) return <p className="drawer-status">Carregando…</p>;
@@ -177,14 +191,23 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
               {reviewsLoading ? "(...)" : `(${formatReviewCount(reviewCount)})`}
             </span>
           </div>
-          <button
-            className="venue-passport-btn"
-            title="Registrar visita e avaliar"
-            onClick={() => setIsCreateOpen(true)}
-          >
-            <Stamp size={18} weight="regular" />
-            Registrar visita
-          </button>
+          {userRecord ? (
+            <button
+              className="venue-passport-btn edit"
+              onClick={() => setIsEditOpen(true)}
+            >
+              <Stamp size={18} weight="regular" />
+              Editar avaliação
+            </button>
+          ) : (
+            <button
+              className="venue-passport-btn"
+              onClick={() => setIsCreateOpen(true)}
+            >
+              <Stamp size={18} weight="regular" />
+              Registrar visita
+            </button>
+          )}
         </div>
 
         <div className="venue-detail-tabs">
@@ -299,9 +322,31 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
         onSuccess={() => {
           setIsCreateOpen(false);
           loadReviewSummary(venueId);
+
+          fetchRecords().then((records) => {
+            const found = records.find(r => r.venue_id === venueId);
+            setUserRecord(found || null);
+          });
         }}
         initialVenueId={venueId}
       />
+
+      {userRecord && (
+        <EditRecordModal
+          isOpen={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
+          record={userRecord}
+          onSuccess={() => {
+            setIsEditOpen(false);
+            loadReviewSummary(venueId);
+
+            fetchRecords().then((records) => {
+              const found = records.find(r => r.venue_id === venueId);
+              setUserRecord(found || null);
+            });
+          }}
+        />
+      )}
     </div>
   );
 }

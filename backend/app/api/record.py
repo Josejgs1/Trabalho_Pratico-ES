@@ -12,12 +12,14 @@ from app.api.auth import get_current_user
 
 router = APIRouter(prefix="/records", tags=["records"])
 
+
 def check_record_owner(record: Record, user: User) -> None:
     if record.user_id != user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not allowed to access this record.",
         )
+
 
 @router.post("/", response_model=RecordRead, status_code=status.HTTP_201_CREATED)
 def create_record(
@@ -29,19 +31,33 @@ def create_record(
     Create a new record (user visit).
     """
 
+    if not record_in.venue_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="O museu é obrigatório.",
+        )
+
+    if record_in.rating < 1 or record_in.rating > 5:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A nota deve estar entre 1 e 5.",
+        )
+
     try:
         record = record_service.create_record(
             db,
             record_in,
-            user_id=current_user.id,  # 👈 sempre seguro
+            user_id=current_user.id,
         )
+
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Record already exists for this user and venue.",
+            detail="Você já avaliou esse museu.",
         )
 
     return RecordRead.model_validate(record)
+
 
 @router.get("/", response_model=list[RecordRead])
 def list_records(
@@ -60,6 +76,7 @@ def list_records(
     )
 
     return [RecordRead.model_validate(r) for r in records]
+
 
 @router.get("/{record_id}", response_model=RecordRead)
 def get_record(
@@ -83,6 +100,7 @@ def get_record(
 
     return RecordRead.model_validate(record)
 
+
 @router.put("/{record_id}", response_model=RecordRead)
 def update_record(
     record_id: uuid.UUID,
@@ -99,11 +117,32 @@ def update_record(
     if record is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Record not found.",
+            detail="Avaliação não encontrada.",
         )
 
     check_record_owner(record, current_user)
 
-    record = record_service.update_record(db, record, record_in)
+    update_data = record_in.model_dump(exclude_unset=True)
+
+    if not update_data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Nenhum dado fornecido para atualização.",
+        )
+
+    if "rating" in update_data:
+        if update_data["rating"] < 1 or update_data["rating"] > 5:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A nota deve estar entre 1 e 5.",
+            )
+
+    try:
+        record = record_service.update_record(db, record, record_in)
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Não foi possível atualizar a avaliação devido a uma restrição no banco de dados.",
+        )
 
     return RecordRead.model_validate(record)

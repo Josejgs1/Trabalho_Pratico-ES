@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 class RecordCreate(BaseModel):
     venue_id: uuid.UUID
-    rating: int = Field(ge=1, le=5, description="Rating from 1 to 5 stars")
+    rating: int
     comment: str | None = Field(None, max_length=1000)
     visit_date: datetime | None = None
 
@@ -14,20 +14,20 @@ class RecordCreate(BaseModel):
     @classmethod
     def validate_rating(cls, value: int) -> int:
         if not (1 <= value <= 5):
-            raise ValueError("Rating must be between 1 and 5")
+            raise ValueError("A nota deve estar entre 1 e 5.")
         return value
 
 
 class RecordUpdate(BaseModel):
-    rating: int | None = Field(None, ge=1, le=5, description="Rating from 1 to 5 stars")
+    rating: int | None 
     comment: str | None = Field(None, max_length=1000)
     visit_date: datetime | None = None
 
     @field_validator("rating")
     @classmethod
     def validate_rating(cls, value: int) -> int:
-        if value is not None and not (1 <= value <= 5):
-            raise ValueError("Rating must be between 1 and 5")
+        if not (1 <= value <= 5):
+            raise ValueError("A nota deve estar entre 1 e 5.")
         return value
 
 

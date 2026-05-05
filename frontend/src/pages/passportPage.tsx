@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ArrowLeft, Plus } from "lucide-react";
 
 import { fetchRecords } from "../services/recordService.js";
 import { fetchRecommendations } from "../services/recommendationService.js";
@@ -76,18 +77,19 @@ export default function PassportPage() {
     <main className="passport-page">
       <div className="passport-container">
 
-        {/* 🔝 HEADER CUSTOM */}
+        {/* HEADER CUSTOM */}
         <div className="passport-top-bar">
 
-          {/* 🔙 Botão voltar */}
+          {/* Go back */}
           <button
             className="back-button"
             onClick={() => (window.location.pathname = "/map")}
           >
-            ← Voltar
+            <ArrowLeft size={16} />
+            <span>Voltar</span>
           </button>
 
-          {/* 🧭 Logo clicável */}
+          {/* Logo */}
           <div
             className="passport-logo"
             onClick={() => (window.location.pathname = "/map")}
@@ -97,12 +99,13 @@ export default function PassportPage() {
             <span>KULTI</span>
           </div>
 
-          {/* 🧭 Nova avaliação */}
+          {/* New record */}
           <button
             className="new-record-button"
             onClick={() => setIsModalOpen(true)}
           >
-            + Nova Avaliação
+            <Plus size={16} />
+            <span>Nova Avaliação</span>
           </button>
 
         </div>

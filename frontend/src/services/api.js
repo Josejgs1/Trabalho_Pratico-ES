@@ -14,24 +14,43 @@ function redirectToLogin() {
 
 export async function apiRequest(path, options = {}) {
   const token = getAccessToken();
+
   const headers = {
     "Content-Type": "application/json",
     ...options.headers,
   };
-  if (token) headers.Authorization = `Bearer ${token}`;
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers,
   });
-  const data = await response.json().catch(() => null);
+
+  let data = null;
+
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
 
   if (!response.ok) {
     if (response.status === 401) {
       redirectToLogin();
     }
 
-    throw new Error(data?.detail ?? "Request failed.");
+    let message = "Erro na requisição.";
+
+    if (Array.isArray(data?.detail)) {
+      message = data.detail.map((err) => err.msg).join(", ");
+    } else if (typeof data?.detail === "string") {
+      message = data.detail;
+    }
+
+    throw new Error(message);
   }
 
   return data;
