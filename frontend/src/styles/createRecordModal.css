@@ -109,24 +109,29 @@
 }
 
 /* STARS */
+
 .stars {
   display: flex;
   gap: 6px;
+  align-items: center;
 }
 
 .star {
-  font-size: 24px;
-  color: #ccc;
+  display: inline-flex;
   cursor: pointer;
-  transition: color 0.15s ease, transform 0.1s ease;
 }
 
-.star:hover {
-  transform: scale(1.1);
+.star-icon {
+  color: var(--color-border-birch);
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.star.filled {
-  color: #6f8c78;
+.star-icon[data-filled="true"] {
+  color: #f5b50a;
+}
+
+.star:hover .star-icon {
+  transform: scale(1.15);
 }
 
 /* mini card */
@@ -156,4 +161,15 @@
 .venue-selected {
   font-size: 0.75rem;
   color: #6f8c78;
+}
+
+.modal-form {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--color-border-birch);
+}
+
+.modal h2 {
+  font-size: 1.35rem;   /* antes provavelmente ~1.2 */
+  font-weight: 500;     /* deixa mais forte */
 }

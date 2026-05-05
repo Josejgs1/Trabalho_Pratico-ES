@@ -11,7 +11,7 @@ export function RecordCard({ record, venue, onUpdated }) {
   }
 
   function handleEditClick(e) {
-    e.stopPropagation(); // 🔥 evita abrir o mapa
+    e.stopPropagation(); 
     setIsEditOpen(true);
   }
 
