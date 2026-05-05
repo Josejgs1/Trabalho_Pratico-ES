@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { Star } from "@phosphor-icons/react";
 import { updateRecord } from "../../services/recordService.js";
 
-/* 🔹 Tipos */
+/* Types */
 type RecordType = {
   id: string;
   rating: number;
@@ -35,7 +36,7 @@ export function EditRecordModal({
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  /* 🔥 IMPORTANTE: sincronizar quando trocar o record */
+  /* Sync when record changes */
   useEffect(() => {
     if (record) {
       setForm({
@@ -57,13 +58,13 @@ export function EditRecordModal({
     try {
       await updateRecord(record.id, form);
 
-      onSuccess();
       onClose();
+      onSuccess();
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Falha ao atualizar registro.");
+        setError("Failed to update record.");
       }
     } finally {
       setLoading(false);
@@ -81,11 +82,13 @@ export function EditRecordModal({
           ✕
         </button>
 
-        <h2>Editar Avaliação</h2>
+        <div className="modal-header">
+          <h2>Editar Avaliação</h2>
+        </div>
 
         <form onSubmit={handleSubmit} className="modal-form">
 
-          {/* ⭐ STARS */}
+          {/* RATING */}
           <div className="field">
             <span>Nota</span>
 
@@ -93,28 +96,34 @@ export function EditRecordModal({
               {[1, 2, 3, 4, 5].map((star) => (
                 <span
                   key={star}
-                  className={`star ${currentRating >= star ? "filled" : ""}`}
+                  className="star"
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(null)}
                   onClick={() => handleRating(star)}
                 >
-                  ★
+                  <Star
+                    size={22}
+                    weight={currentRating >= star ? "fill" : "regular"}
+                    className="star-icon"
+                    data-filled={currentRating >= star}
+                  />
                 </span>
               ))}
             </div>
           </div>
 
-          {/* 💬 COMMENT */}
+          {/* COMMENT */}
           <label className="field">
             <span>Comentário</span>
             <textarea
               value={form.comment}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              onChange={(e) =>
                 setForm((prev) => ({
                   ...prev,
                   comment: e.target.value,
                 }))
               }
+              placeholder="Conte sua opinião..."
               className="textarea-clean"
             />
           </label>
@@ -122,7 +131,7 @@ export function EditRecordModal({
           {error && <p className="modal-error">{error}</p>}
 
           <button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Update"}
+            {loading ? "Salvando..." : "Atualizar"}
           </button>
 
         </form>

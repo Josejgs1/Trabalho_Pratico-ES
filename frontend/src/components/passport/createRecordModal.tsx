@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Star } from "@phosphor-icons/react";
 
 import { fetchVenues } from "../../services/venueService.js";
 import { createRecord } from "../../services/recordService.js";
@@ -62,6 +63,21 @@ export function CreateRecordModal({
     useEffect(() => {
         if (!isOpen) return;
 
+        setForm({
+            venue_id: initialVenueId || "",
+            rating: 0,
+            comment: "",
+        });
+        setQuery("");
+        setSelectedVenue(null);
+        setFiltered([]);
+        setHoverRating(null);
+        setError("");
+    }, [isOpen, initialVenueId]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
         async function loadVenues() {
             try {
                 const data = await fetchVenues();
@@ -110,11 +126,12 @@ export function CreateRecordModal({
                 comment: form.comment || null,
             });
 
-            onSuccess();
             onClose();
+            onSuccess();
+
         } catch (err) {
             if (err instanceof Error) setError(err.message);
-            else setError("Falha ao criar avaliação.");
+            else setError("Failed to create record.");
         } finally {
             setLoading(false);
         }
@@ -129,11 +146,13 @@ export function CreateRecordModal({
                     ✕
                 </button>
 
-                <h2>Nova Avaliação</h2>
+                <div className="modal-header">
+                    <h2>Nova Avaliação</h2>
+                </div>
 
                 <form onSubmit={handleSubmit} className="modal-form">
 
-                    {/* 🔎 AUTOCOMPLETE */}
+                    {/* AUTOCOMPLETE */}
                     <label className="field">
                         <span>Museu</span>
 
@@ -177,7 +196,7 @@ export function CreateRecordModal({
                         )}
                     </label>
 
-                    {/* ⭐ RATING */}
+                    {/* RATING */}
                     <div className="field">
                         <span>Nota</span>
 
@@ -188,19 +207,24 @@ export function CreateRecordModal({
                                 return (
                                     <span
                                         key={star}
-                                        className={`star ${current >= star ? "filled" : ""}`}
+                                        className="star"
                                         onMouseEnter={() => setHoverRating(star)}
                                         onMouseLeave={() => setHoverRating(null)}
                                         onClick={() => handleRating(star)}
                                     >
-                                        ★
+                                        <Star
+                                            size={22}
+                                            weight={current >= star ? "fill" : "regular"}
+                                            className="star-icon"
+                                            data-filled={current >= star}
+                                        />
                                     </span>
                                 );
                             })}
                         </div>
                     </div>
 
-                    {/* 💬 COMMENT */}
+                    {/* COMMENT */}
                     <label className="field">
                         <span>Comentário</span>
                         <textarea
