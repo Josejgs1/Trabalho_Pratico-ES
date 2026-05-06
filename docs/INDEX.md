@@ -2,6 +2,16 @@
 
 > This file is a manifest for AI tools and developers. It maps every doc in this repository.
 
+## How to Run
+
+After the initial setup ([SETUP.md](../SETUP.md)), start the entire project with:
+
+```bash
+./start.sh
+```
+
+This starts the database, backend, and frontend in a single command. Use `Ctrl+C` to stop all services.
+
 ## setup/ — Environment & Infrastructure
 
 | File | Description |
