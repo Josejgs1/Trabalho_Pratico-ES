@@ -105,7 +105,8 @@ classDiagram
         -DateTime updated_at
         +create()
         +update()
-        +delete()
+        +get()
+        +list()
     }
 
     class Wishlist {
