@@ -15,10 +15,10 @@ Guide for running the project for the first time.
    cp .env.example .env
    ```
 
-2. **Database** — follow [docs/docker-setup.md](docs/docker-setup.md)
+2. **Database** — follow [docs/docker-setup.md](setup/docker-setup.md)
 
-3. **Backend** — follow [docs/backend-setup.md](docs/backend-setup.md)
+3. **Backend** — follow [docs/backend-setup.md](setup/backend-setup.md)
 
 ## Further Reading
 
-- [Golden Path](docs/golden-path.md) — project conventions and standards
+- [Golden Path](guidelines/golden-path.md) — project conventions and standards

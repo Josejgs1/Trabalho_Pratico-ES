@@ -4,7 +4,7 @@
 
 ## How to Run
 
-After the initial setup ([SETUP.md](../SETUP.md)), start the entire project with:
+After the initial setup ([SETUP.md](SETUP.md)), start the entire project with:
 
 ```bash
 ./start.sh
