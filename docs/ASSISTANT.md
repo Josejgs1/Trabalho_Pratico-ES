@@ -14,6 +14,7 @@
 ## Documentation Map
 
 ### Setup & Infrastructure
+- `docs/SETUP.md` — Getting started guide (prerequisites, env vars, first run)
 - `docs/setup/backend-setup.md` — Python venv, dependencies, running FastAPI
 - `docs/setup/auth-api.md` — Authentication endpoints and request/response examples
 - `docs/setup/venues-api.md` — Venue listing, detail, search, and filter endpoints
@@ -43,6 +44,7 @@
 
 ```
 ├── docs/                   # Documentation (see INDEX.md)
+│   ├── SETUP.md            # Getting started guide
 │   ├── setup/              # Environment & infrastructure
 │   ├── adr/                # Architecture Decision Records
 │   └── guidelines/         # Team conventions & standards
