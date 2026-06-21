@@ -10,7 +10,8 @@
 4. When adding new documentation, add a corresponding entry to [INDEX.md](INDEX.md).
 5. Follow the project structure defined in the Golden Path — do not create files outside the established directories without justification.
 6. Commit messages must be a **single line** in the imperative mood (≤ 72 chars). No multi-line bodies.
-7. Before creating or modifying any file inside `backend/tests/`, read [Backend Testing Guide](guidelines/testing-backend.md) and follow the fixture pattern and conventions defined there.
+7. Before opening a pull request, read `.github/pull_request_template.md` and fill every section. Use `gh pr create --body "..."` (or `--body-file`) to submit the completed description in one step — do not open the PR with an empty description and update it later.
+8. Before creating or modifying any file inside `backend/tests/`, read [Backend Testing Guide](guidelines/testing-backend.md) and follow the fixture pattern and conventions defined there.
 
 ## Documentation Map
 
