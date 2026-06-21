@@ -10,6 +10,7 @@
 4. When adding new documentation, add a corresponding entry to [INDEX.md](INDEX.md).
 5. Follow the project structure defined in the Golden Path — do not create files outside the established directories without justification.
 6. Commit messages must be a **single line** in the imperative mood (≤ 72 chars). No multi-line bodies.
+7. Before creating or modifying any file inside `backend/tests/`, read [Backend Testing Guide](guidelines/testing-backend.md) and follow the fixture pattern and conventions defined there.
 
 ## Documentation Map
 
@@ -30,6 +31,7 @@
 ### Team Conventions
 - `docs/guidelines/golden-path.md` — Naming, branching, commits, project structure, tech stack
 - `docs/guidelines/acceptance-criteria.md` — PR and task completion rules
+- `docs/guidelines/testing-backend.md` — Backend test conventions: fixture pattern, file structure, how to seed data and mock external services
 
 ## Tech Stack
 
