@@ -20,6 +20,7 @@ This starts the database, backend, and frontend in a single command. Use `Ctrl+C
 | [auth-api.md](setup/auth-api.md) | Authentication endpoints and request/response examples |
 | [docker-setup.md](setup/docker-setup.md) | Docker Compose setup for the PostgreSQL + PostGIS database |
 | [database-schema.md](setup/database-schema.md) | ER diagram, conventions, and detailed column reference for all tables |
+| [testing-backend.md](setup/testing-backend.md) | How to run the pytest suite, fixture pattern, and guide for writing new backend tests |
 
 ## adr/ — Architecture Decision Records
 
