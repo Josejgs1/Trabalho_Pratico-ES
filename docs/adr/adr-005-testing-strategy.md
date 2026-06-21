@@ -11,7 +11,7 @@ Accepted
 ## Context
 TP2 requires the team to add automated tests to the existing KULTI codebase with the following constraints:
 
-- Unit and/or integration tests with at least **80% coverage**
+- Unit and/or integration tests with at least **80% coverage** (backend and frontend)
 - Exactly **4 end-to-end (E2E) tests**
 - The professor suggested Cypress or Playwright for E2E
 
@@ -51,6 +51,17 @@ npm install --save-dev @playwright/test
 npx playwright install chromium
 ```
 
+### Frontend unit tests: Vitest + React Testing Library
+- **Vitest** — built by the Vite team, shares the same config/plugin pipeline with zero extra setup; faster than Jest for Vite projects
+- **React Testing Library** (`@testing-library/react`) — the standard for rendering and querying React components in tests
+- **jsdom** — lightweight DOM environment so tests run without a real browser
+- **@vitest/coverage-v8** — produces the coverage report required for the 80% target
+
+New dev dependencies:
+```bash
+npm install --save-dev vitest @testing-library/react @testing-library/jest-dom jsdom @vitest/coverage-v8
+```
+
 ## Rationale
 - Both choices are the idiomatic, well-documented options for their respective stacks
 - They avoid introducing unfamiliar tooling that would slow down a short-deadline delivery
@@ -59,8 +70,10 @@ npx playwright install chromium
 ## Consequences
 - A `conftest.py` must be created with fixtures for the test database session and HTTP client
 - The Gemini API calls must be mocked with `unittest.mock.patch` to keep tests deterministic and offline
-- Coverage must be run before the presentation: `pytest --cov=app --cov-report=term-missing --cov-fail-under=80`
-- Focus modules for coverage: `app/api/`, `app/services/`; Pydantic schema validation is exercised naturally through endpoint tests
+- Backend coverage must be run before the presentation: `pytest --cov=app --cov-report=term-missing --cov-fail-under=80`
+- Frontend coverage must be run before the presentation: `npx vitest run --coverage` (must reach ≥ 80%)
+- Focus modules for backend coverage: `app/api/`, `app/services/`; Pydantic schema validation is exercised naturally through endpoint tests
+- Focus modules for frontend coverage: `src/services/`, `src/components/`; page-level components are exercised by E2E tests
 - 4 E2E flows to implement: user registration, login + map load, visit record, wishlist add
 
 ## See Also
