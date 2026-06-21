@@ -41,3 +41,5 @@ This starts the database, backend, and frontend in a single command. Use `Ctrl+C
 | [ai-suggestions-behavior.md](guidelines/ai-suggestions-behavior.md) | Logic, sequence flow, and decision-making for the Gemini-powered recommendation system |
 | [ai-suggestions-prompts.md](guidelines/ai-suggestions-prompts.md) | Structured prompt templates and JSON output definitions for Gemini |
 | [testing-backend.md](guidelines/testing-backend.md) | How to run the pytest suite, fixture pattern, and guide for writing new backend tests |
+| [testing-frontend-unit.md](guidelines/testing-frontend-unit.md) | How to run Vitest, mock patterns, and guide for writing frontend unit tests |
+| [testing-e2e.md](guidelines/testing-e2e.md) | How to run Playwright E2E tests, accessible selectors, and the 4 required flows |
