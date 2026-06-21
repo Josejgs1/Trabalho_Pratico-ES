@@ -9,11 +9,12 @@
 3. Before making architectural decisions, check existing [ADRs](adr/) for prior decisions.
 4. When adding new documentation, add a corresponding entry to [INDEX.md](INDEX.md).
 5. Follow the project structure defined in the Golden Path — do not create files outside the established directories without justification.
-6. Commit messages must be a **single line** in the imperative mood (≤ 72 chars). No multi-line bodies.
-7. Before opening a pull request, read `.github/pull_request_template.md` and fill every section. Use `gh pr create --body "..."` (or `--body-file`) to submit the completed description in one step — do not open the PR with an empty description and update it later. After the PR is created: (a) identify the related GitHub issue number from the task context or branch name, (b) find its project item ID with `gh api graphql` querying `user.projectV2(number: 3).items`, and (c) update its status to **Code Review** using `updateProjectV2ItemFieldValue`. Do not skip this step even if the PR does not use `Closes #N` syntax.
-8. Before creating or modifying any file inside `backend/tests/`, read [Backend Testing Guide](guidelines/testing-backend.md) and follow the fixture pattern and conventions defined there.
-9. Before creating or modifying any file inside `frontend/src/tests/`, read [Frontend Unit Testing Guide](guidelines/testing-frontend-unit.md) and follow the mock patterns and conventions defined there.
-10. Before creating or modifying any file inside `frontend/e2e/`, read [E2E Testing Guide](guidelines/testing-e2e.md) and follow the accessible selector patterns and conventions defined there.
+6. Branch names must follow the pattern `<type>/<short-description>` from the [Golden Path](guidelines/golden-path.md#branch-naming). Valid types: `feature/`, `fix/`, `refactor/`, `setup/`, `docs/`. Do not invent new types.
+7. Commit messages must be a **single line** in the imperative mood (≤ 72 chars). No multi-line bodies.
+8. Before opening a pull request, read `.github/pull_request_template.md` and fill every section. Use `gh pr create --body "..."` (or `--body-file`) to submit the completed description in one step — do not open the PR with an empty description and update it later. After the PR is created: (a) identify the related GitHub issue number from the task context or branch name, (b) find its project item ID with `gh api graphql` querying `user.projectV2(number: 3).items`, and (c) update its status to **Code Review** using `updateProjectV2ItemFieldValue`. Do not skip this step even if the PR does not use `Closes #N` syntax.
+9. Before creating or modifying any file inside `backend/tests/`, read [Backend Testing Guide](guidelines/testing-backend.md) and follow the fixture pattern and conventions defined there.
+10. Before creating or modifying any file inside `frontend/src/tests/`, read [Frontend Unit Testing Guide](guidelines/testing-frontend-unit.md) and follow the mock patterns and conventions defined there.
+11. Before creating or modifying any file inside `frontend/e2e/`, read [E2E Testing Guide](guidelines/testing-e2e.md) and follow the accessible selector patterns and conventions defined there.
 
 ## Documentation Map
 
