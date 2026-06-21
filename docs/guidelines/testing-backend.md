@@ -1,5 +1,7 @@
 [← Back to Index](../INDEX.md)
 
+> Part of the [Guidelines](.) — for setup steps only, see [Backend Setup](../setup/backend-setup.md).
+
 # Backend Testing Guide
 
 How to run the test suite and how to write new tests for the KULTI backend.
