@@ -19,11 +19,17 @@ The stack is FastAPI (Python) on the backend and React + Vite on the frontend.
 
 ## Decision
 
-### Backend: pytest + httpx
+### Backend: pytest + httpx (integration tests)
 - `pytest` is the standard test runner in the Python ecosystem
 - `httpx AsyncClient` is the officially recommended way to test FastAPI endpoints
 - `pytest-cov` produces the coverage report required for the presentation
 - `pytest-asyncio` enables async test isolation via transaction rollback per test
+
+**Why integration tests instead of unit tests:**
+- The backend's business logic is thin — most value lives in SQL queries and endpoint wiring, not in isolated functions
+- Mocking the database would test almost nothing useful since the real behaviour depends on PostGIS queries (geography, spatial filters)
+- Integration tests exercise the full stack (HTTP → router → service → DB) with a real PostgreSQL instance, providing higher confidence with fewer lines of code
+- External APIs (Gemini) are still mocked to keep tests deterministic and offline
 
 New dependencies to add to `requirements.txt`:
 ```
