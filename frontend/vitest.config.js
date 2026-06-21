@@ -10,21 +10,7 @@ export default defineConfig({
     exclude: ["e2e/**", "node_modules/**"],
     coverage: {
       provider: "v8",
-      include: [
-        "src/services/**/*.{js,jsx,ts,tsx}",
-        "src/components/auth/**/*.{js,jsx,ts,tsx}",
-        "src/components/brand/**/*.{js,jsx,ts,tsx}",
-        "src/components/map/categoryCarousel.jsx",
-        "src/components/map/mapOverlay.jsx",
-        "src/components/map/searchBar.jsx",
-        "src/components/map/searchResults.jsx",
-        "src/components/map/sideDrawer.jsx",
-        "src/components/passport/passportHeader.jsx",
-        "src/components/passport/recordCard.jsx",
-        "src/components/passport/recordList.jsx",
-        "src/components/passport/wishlistCard.jsx",
-        "src/components/passport/wishlistList.jsx",
-      ],
+      include: ["src/**/*.{js,jsx,ts,tsx}"],
       exclude: ["src/tests/**", "src/main.jsx", "src/assets/**"],
       thresholds: {
         statements: 80,
