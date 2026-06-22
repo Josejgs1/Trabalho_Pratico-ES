@@ -137,6 +137,7 @@ export default function VenueDrawerContent({ venueId, onCategorySelect, activeCa
         )}
         <button
           className={`venue-detail-wishlist${wishlisted ? " active" : ""}`}
+          aria-label={wishlisted ? "Remover da wishlist" : "Adicionar à wishlist"}
           onClick={(e) => {
             e.stopPropagation();
             const next = !wishlisted;

@@ -211,9 +211,11 @@ export function CreateRecordModal({
                                 const current = hoverRating ?? form.rating;
 
                                 return (
-                                    <span
+                                    <button
+                                        type="button"
                                         key={star}
                                         className="star"
+                                        aria-label={`Nota ${star}`}
                                         onMouseEnter={() => setHoverRating(star)}
                                         onMouseLeave={() => setHoverRating(null)}
                                         onClick={() => handleRating(star)}
@@ -224,7 +226,7 @@ export function CreateRecordModal({
                                             className="star-icon"
                                             data-filled={current >= star}
                                         />
-                                    </span>
+                                    </button>
                                 );
                             })}
                         </div>
