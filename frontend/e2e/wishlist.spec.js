@@ -15,7 +15,6 @@ test("user can add a venue to wishlist", async ({ page, request }) => {
   await expect(page.getByRole("button", { name: "Meu Passaporte" })).toBeVisible();
 
   await page.getByPlaceholder("Busque por museus, galerias...").fill(venue.name);
-  await page.getByRole("option").filter({ hasText: venue.name }).first().click();
   await expect(page.getByRole("heading", { name: venue.name })).toBeVisible();
 
   const [addWishlistResponse] = await Promise.all([
