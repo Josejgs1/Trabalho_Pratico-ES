@@ -13,16 +13,47 @@
 
 import { test, expect } from "@playwright/test";
 
-const uniqueEmail = () => `e2e_${Date.now()}@test.com`;
+import { readStoredAccessToken, uniqueEmail } from "./helpers.js";
 
 test("user can register a new account", async ({ page }) => {
+  const email = uniqueEmail("register");
+
   await page.goto("/register");
 
   await page.getByLabel("Nome").fill("E2E Tester");
-  await page.getByLabel("Email").fill(uniqueEmail());
+  await page.getByLabel("Email").fill(email);
   await page.getByLabel("Senha").fill("securepassword");
+
+  const registerResponsePromise = page.waitForResponse((response) =>
+    response.url().includes("/auth/register") &&
+    response.request().method() === "POST"
+  );
+  const loginResponsePromise = page.waitForResponse((response) =>
+    response.url().includes("/auth/login") &&
+    response.request().method() === "POST"
+  );
+
   await page.getByRole("button", { name: "Criar conta" }).click();
 
-  // After successful registration, user is redirected to the map
-  await expect(page).toHaveURL(/\/map/, { timeout: 5000 });
+  const registerResponse = await registerResponsePromise;
+  const registeredUser = await registerResponse.json();
+  expect(registerResponse.status()).toBe(201);
+  expect(registeredUser).toMatchObject({
+    name: "E2E Tester",
+    email,
+    is_active: true,
+  });
+  expect(registeredUser.password).toBeUndefined();
+  expect(registeredUser.password_hash).toBeUndefined();
+
+  const loginResponse = await loginResponsePromise;
+  const auth = await loginResponse.json();
+  expect(loginResponse.status()).toBe(200);
+  expect(auth.token_type).toBe("bearer");
+  expect(auth.access_token).toBeTruthy();
+  expect(auth.user.email).toBe(email);
+
+  await expect(page).toHaveURL(/\/map/, { timeout: 10_000 });
+  await expect(page.getByRole("button", { name: "Meu Passaporte" })).toBeVisible();
+  await expect.poll(() => readStoredAccessToken(page)).toBe(auth.access_token);
 });
