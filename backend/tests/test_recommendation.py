@@ -87,3 +87,68 @@ async def test_recommendations_return_ai_source_when_gemini_succeeds(client, db)
     gemini.assert_called_once()
 
 
+@pytest.mark.asyncio
+async def test_recommendations_fallback_when_gemini_fails(client, db):
+    auth_headers, user_id = _make_user_context(db)
+    visited = _make_venue(db, name="Museu Visitado", category="Fotografia")
+    _make_venue(db, name="Fotografia A", category="Fotografia")
+    _make_venue(db, name="Fotografia B", category="Fotografia")
+    _make_venue(db, name="Fotografia C", category="Fotografia")
+    db.add(Record(user_id=user_id, venue_id=visited.id, rating=4))
+    db.flush()
+
+    with patch(
+        "app.services.recommendation._call_gemini",
+        side_effect=RecommendationAiError("Gemini unavailable"),
+    ):
+        resp = await client.get(RECOMMENDATIONS_URL, headers=auth_headers)
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["source"] == "popularity_fallback"
+    assert body["fallback_reason"]
+    assert len(body["venues"]) == 3
+
+
+@pytest.mark.asyncio
+async def test_recommendations_fallback_when_gemini_returns_invalid_names(client, db):
+    auth_headers, user_id = _make_user_context(db)
+    visited = _make_venue(db, name="Museu Base", category="História")
+    _make_venue(db, name="História A", category="História")
+    _make_venue(db, name="História B", category="História")
+    _make_venue(db, name="História C", category="História")
+    db.add(Record(user_id=user_id, venue_id=visited.id, rating=5))
+    db.flush()
+
+    with patch(
+        "app.services.recommendation._call_gemini",
+        return_value=_ai_output("Inventado 1", "Inventado 2", "Inventado 3"),
+    ):
+        resp = await client.get(RECOMMENDATIONS_URL, headers=auth_headers)
+
+    assert resp.status_code == 200
+    assert resp.json()["source"] == "popularity_fallback"
+
+
+@pytest.mark.asyncio
+async def test_recommendations_use_popularity_without_user_history(client, db):
+    auth_headers, _user_id = _make_user_context(db)
+    _make_venue(db, name="Popular A")
+    _make_venue(db, name="Popular B")
+    _make_venue(db, name="Popular C")
+
+    with patch("app.services.recommendation._call_gemini") as gemini:
+        resp = await client.get(RECOMMENDATIONS_URL, headers=auth_headers)
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["source"] == "popularity_fallback"
+    assert len(body["venues"]) == 3
+    gemini.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_recommendations_require_auth(client):
+    resp = await client.get(RECOMMENDATIONS_URL)
+
+    assert resp.status_code == 401
